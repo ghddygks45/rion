@@ -4,7 +4,7 @@
 
 - [x] 1. Next.js 프로젝트 생성 (TypeScript, Tailwind, App Router)
 - [x] 2. TanStack Query 설치 및 Provider 세팅
-- [ ] 3. Tailwind 디자인 토큰 세팅 (disign.md 기반 색상, 폰트)
+- [x] 3. Tailwind 디자인 토큰 세팅 (disign.md 기반 색상, 폰트)
 - [ ] 4. Vercel 배포 연결 (GitHub 연동)
 
 ---
