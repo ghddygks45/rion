@@ -64,11 +64,27 @@ Pretendard 폰트 패키지를 설치하고 `next/font/local`로 등록했다. `
 
 ---
 
+### CLAUDE.md 추가 업데이트
+
+plan 1-3 이후 협업 방식에 몇 가지 규칙을 추가했다.
+
+완료 검증 규칙을 추가했다. 모든 plan 완료 시 `npx tsc --noEmit`과 `npm run build`를 실행하고, UI 작업이 포함된 plan에서는 localhost:3000 화면 확인을 사용자에게 요청한다. 화면 확인 시 스크린샷을 `docs/plans/{plan번호}/screenshot.png`로 저장하고 report.md에 첨부한다. 화면 확인은 사용자가 직접 OK 해야 완료로 간주한다.
+
+---
+
+### 협업 도구 세팅
+
+Claude Code 훅을 활용한 자동화 세팅을 진행했다. plan 완료 시 Windows TTS로 "플랜이 완료되었습니다"를 음성으로 알려주는 기능을 구현했다. 전역 설정이 아닌 프로젝트 전용 `.claude/settings.json`에 Stop 훅으로 등록했고, `.claude/plan-active` 플래그 파일이 존재할 때만 TTS가 실행되도록 조건을 걸었다. plan 완료 시 제가 플래그 파일을 생성하고, 훅이 TTS 실행 후 파일을 삭제하는 방식이다. CLAUDE.md 로그 규칙에도 플래그 파일 생성 규칙을 추가했다.
+
+---
+
 ## 현재 상태
 
 - plan 1-1 완료
 - plan 1-2 완료
 - plan 1-3 완료
+- CLAUDE.md 완료 검증 규칙 추가
+- plan 완료 시 TTS 알림 훅 세팅 완료
 
 ## 다음 할 일
 

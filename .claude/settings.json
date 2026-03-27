@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "test -f 'c:/Users/user/Desktop/rion/.claude/plan-active' && powershell -Command \"Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('플랜이 완료되었습니다')\" && rm 'c:/Users/user/Desktop/rion/.claude/plan-active' || true",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}
