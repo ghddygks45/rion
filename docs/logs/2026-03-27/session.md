@@ -78,14 +78,20 @@ Claude Code 훅을 활용한 자동화 세팅을 진행했다. plan 완료 시 W
 
 ---
 
+### Plan 1-4 실행 (Vercel 배포 연결)
+
+GitHub 저장소와 Vercel 프로젝트를 연동했다. main 브랜치 push 시 프로덕션 자동 배포, develop 브랜치 push 시 Preview URL 자동 생성 확인 완료. Phase 1 전체 완료.
+
+---
+
 ## 현재 상태
 
 - plan 1-1 완료
 - plan 1-2 완료
 - plan 1-3 완료
-- CLAUDE.md 완료 검증 규칙 추가
-- plan 완료 시 TTS 알림 훅 세팅 완료
+- plan 1-4 완료
+- Phase 1 전체 완료
 
 ## 다음 할 일
 
-- plan 1-4: Vercel 배포 연결
+- Phase 2 시작: plan 2-1 공통 컴포넌트 구현
