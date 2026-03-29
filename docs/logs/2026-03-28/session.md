@@ -25,10 +25,17 @@
 
 ---
 
+### Plan 2-2. 다크/라이트 테마 시스템 구축
+
+CSS 변수 기반으로 다크/라이트 모드를 전환하는 테마 시스템을 구축했다. globals.css를 2단계 구조(:root/.dark → @theme)로 리팩토링하고, ThemeProvider와 useTheme 훅을 구현했다. localStorage로 선택 유지, body transition으로 부드러운 전환 적용.
+
+---
+
 ## 현재 상태
 
 - plan 2-1 완료
+- plan 2-2 완료
 
 ## 다음 할 일
 
-- plan 2-2: 다크/라이트 테마 시스템 구축
+- plan 2-3: 오늘의 테마 목록 피처

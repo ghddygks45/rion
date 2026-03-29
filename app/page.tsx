@@ -3,6 +3,7 @@ import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Title from "@/components/ui/Title";
 import StockTable, { StockRow } from "@/components/ui/StockTable";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 const mockStocks: StockRow[] = [
   {
@@ -31,6 +32,7 @@ const mockStocks: StockRow[] = [
 export default function Home() {
   return (
     <div className="p-8 space-y-8 max-w-2xl">
+      <ThemeToggle />
       <div className="space-y-4">
         <Title level={1}>Title Level 1</Title>
         <br />
