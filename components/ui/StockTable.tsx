@@ -75,7 +75,7 @@ export default function StockTable({
               return (
                 <tr
                   key={i}
-                  className="relative border-t border-border hover:bg-white/3"
+                  className="relative border-t border-border hover:bg-black/5 dark:hover:bg-white/20"
                 >
                   <td className="py-3 pl-4 text-text font-medium">
                     {stock.href && (

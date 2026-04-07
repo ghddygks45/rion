@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Providers } from "@/lib/query-client";
 import { ThemeProvider } from "@/lib/theme";
+import Header from "@/components/layout/Header";
 
 const pretendard = localFont({
   src: "../node_modules/pretendard/dist/web/static/woff2/Pretendard-Regular.woff2",
@@ -26,13 +27,18 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{
-          __html: `(function(){var t=localStorage.getItem('theme')||'dark';if(t==='dark')document.documentElement.classList.add('dark');})()`
-        }} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var t=localStorage.getItem('theme')||'dark';if(t==='dark')document.documentElement.classList.add('dark');})()`,
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <Providers>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <Header />
+            {children}
+          </ThemeProvider>
         </Providers>
       </body>
     </html>

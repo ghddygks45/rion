@@ -1,6 +1,7 @@
 # Report 2-2. 다크/라이트 테마 시스템 구축
 
 ## 작업 결과
+
 완료
 
 ---
@@ -25,7 +26,7 @@ app/layout.tsx                - ThemeProvider 적용 + FOUC 해결 스크립트
 ```css
 /* 기존 - 다크모드 고정 */
 @theme {
-  --color-bg: #0A0A0A;
+  --color-bg: #0a0a0a;
   --color-surface: #141414;
 }
 ```
@@ -35,12 +36,12 @@ app/layout.tsx                - ThemeProvider 적용 + FOUC 해결 스크립트
 ```css
 /* 1단계: 모드별 CSS 변수 정의 */
 :root {
-  --bg: #F4F4F5;   /* 라이트 */
-  --surface: #FFFFFF;
+  --bg: #f4f4f5; /* 라이트 */
+  --surface: #ffffff;
 }
 
 .dark {
-  --bg: #0A0A0A;   /* 다크 */
+  --bg: #0a0a0a; /* 다크 */
   --surface: #141414;
 }
 
@@ -64,15 +65,17 @@ app/layout.tsx                - ThemeProvider 적용 + FOUC 해결 스크립트
 테마 상태를 앱 전체에서 공유하기 위한 React Context Provider입니다.
 
 ```ts
-type Theme = 'dark' | 'light'
+type Theme = "dark" | "light";
 ```
 
 `ThemeProvider`가 하는 일:
+
 1. `useState`로 현재 테마 상태를 관리합니다. 초기값은 `'dark'`입니다.
 2. 마운트 시(`useEffect`) localStorage에서 저장된 테마를 읽어 상태에 반영합니다. 저장값이 없으면 다크모드를 기본값으로 적용합니다.
 3. `document.documentElement.classList.toggle('dark', ...)`로 `<html>` 요소에 `.dark` 클래스를 붙이거나 제거합니다.
 
 `toggleTheme` 함수가 하는 일:
+
 1. 현재 테마를 반전시킵니다 (`dark` → `light`, `light` → `dark`)
 2. `localStorage.setItem('theme', next)`로 선택값을 저장합니다
 3. `<html>`의 `.dark` 클래스를 토글합니다
@@ -86,7 +89,9 @@ type Theme = 'dark' | 'light'
 `useTheme` 훅으로 현재 테마를 읽고, 클릭 시 `toggleTheme`을 호출하는 버튼입니다.
 
 ```tsx
-{theme === 'dark' ? '라이트' : '다크'}
+{
+  theme === "dark" ? "라이트" : "다크";
+}
 ```
 
 현재 다크모드면 "라이트"를, 라이트모드면 "다크"를 표시합니다. 즉 버튼 텍스트는 "전환할 모드"를 나타냅니다.
@@ -111,9 +116,11 @@ type Theme = 'dark' | 'light'
 
 ```tsx
 <head>
-  <script dangerouslySetInnerHTML={{
-    __html: `(function(){var t=localStorage.getItem('theme')||'dark';if(t==='dark')document.documentElement.classList.add('dark');})()`
-  }} />
+  <script
+    dangerouslySetInnerHTML={{
+      __html: `(function(){var t=localStorage.getItem('theme')||'dark';if(t==='dark')document.documentElement.classList.add('dark');})()`,
+    }}
+  />
 </head>
 ```
 
@@ -155,6 +162,36 @@ type Theme = 'dark' | 'light'
 ### 적용한 해결책
 
 A안을 선택해 `layout.tsx`의 `<head>`에 인라인 스크립트를 추가했습니다. 브라우저가 `<body>`를 파싱하기 전에 이 스크립트가 동기적으로 실행되어 localStorage 값을 읽고 즉시 `.dark`를 붙입니다. 이후 `<body>`가 그려질 때는 이미 올바른 테마가 적용된 상태이므로 transition이 발동할 상황 자체가 없어집니다.
+
+---
+
+## 추가 논의 (2026-04-07)
+
+### theme.tsx 리팩토링
+
+ESLint `react-hooks/set-state-in-effect` 경고로 인해 코드를 React 공식 권장 방식으로 변경했다.
+
+**변경 전:** `useState("dark")` + `useEffect`에서 `setTheme` + `classList.toggle`
+
+**변경 후:**
+
+- `useState` lazy initializer로 localStorage에서 초기값 읽기
+- `useEffect([theme])`으로 DOM 클래스만 동기화 (setState 없음)
+- `toggleTheme` 안의 `classList.toggle` 제거 (useEffect가 자동 처리)
+
+### 왜 쿠키로 안 하는가
+
+쿠키 방식은 서버가 요청 시 쿠키를 읽어 처음부터 올바른 테마로 렌더하므로 FOUC도 없고 dev 경고도 없다.
+
+그러나 `cookies()`를 `layout.tsx`에서 호출하는 순간 하위 모든 페이지가 Static → Dynamic Rendering으로 전환된다. 테마 하나 때문에 전체 앱이 매 요청마다 서버에서 렌더되는 건 과한 트레이드오프다.
+
+### 왜 dev 경고를 감수하는가
+
+light 모드 저장 후 새로고침 시 `Encountered a script tag while rendering React component` 경고가 발생한다.
+
+원인: 서버는 항상 `"dark"`로 렌더(window 없음), 클라이언트는 localStorage에서 `"light"` 읽음 → 불일치 → React 재렌더 → script 태그 경고.
+
+이 경고는 React 19에서 새로 추가된 dev 전용 경고다. 프로덕션 빌드에서는 발생하지 않는다. `next-themes` 등 커뮤니티 표준 라이브러리들도 동일한 인라인 script 방식을 사용하며, 현재 Next.js + React 19 생태계 전체가 안고 있는 이슈다. 현실적으로 최선의 방법이라 감수하기로 결정했다.
 
 ---
 
