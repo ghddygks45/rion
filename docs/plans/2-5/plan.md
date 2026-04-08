@@ -58,29 +58,29 @@
 ### 1. `features/stock-detail/types.ts`
 
 ```ts
-export type Signal = '52주 신고가' | '이상 거래량' | '52주 신저가'
+export type Signal = "52주 신고가" | "이상 거래량" | "52주 신저가";
 
 export type MarketIndex = {
-  name: string
-  value: number
-  changeRate: number
-}
+  name: string;
+  value: number;
+  changeRate: number;
+};
 
 export type Supply = {
-  institution: number   // 기관 순매수 (억, 음수면 순매도)
-  foreign: number       // 외국인 순매수 (억, 음수면 순매도)
-}
+  institution: number; // 기관 순매수 (억, 음수면 순매도)
+  foreign: number; // 외국인 순매수 (억, 음수면 순매도)
+};
 
 export type StockDetail = {
-  ticker: string
-  name: string
-  price: number
-  changeRate: number
-  signals: Signal[]
-  supply: Supply
-  marketIndices: MarketIndex[]
-  news: { title: string; date: string }[]
-}
+  ticker: string;
+  name: string;
+  price: number;
+  changeRate: number;
+  signals: Signal[];
+  supply: Supply;
+  marketIndices: MarketIndex[];
+  news: { title: string; date: string }[];
+};
 ```
 
 ### 2. `features/stock-detail/mocks.ts`
@@ -96,12 +96,14 @@ export type StockDetail = {
 ### 4. `features/stock-detail/components/MarketOverview.tsx`
 
 시장 지표 6개를 가로로 나열.
+
 - KOSPI, KOSDAQ, 나스닥 선물, S&P500 선물, 유가(WTI), 금
 - 각 항목: 지표명 / 값 / 등락률(Badge)
 
 ### 5. `features/stock-detail/components/SupplySection.tsx`
 
 기관/외국인 순매수 현황.
+
 - 양수면 `+N억` (text-up), 음수면 `-N억` (text-down)
 
 ### 6. `features/stock-detail/components/SignalSection.tsx`

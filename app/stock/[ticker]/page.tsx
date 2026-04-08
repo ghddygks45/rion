@@ -3,6 +3,8 @@ import { mockStockDetails } from "@/features/stock-detail/mocks";
 import StockDetailHeader from "@/features/stock-detail/components/StockDetailHeader";
 import MarketOverview from "@/features/stock-detail/components/MarketOverview";
 import SupplySection from "@/features/stock-detail/components/SupplySection";
+import SignalSection from "@/features/stock-detail/components/SignalSection";
+import NewsSection from "@/features/shared/components/NewsSection";
 
 export default async function StockDetailPage({
   params,
@@ -30,6 +32,8 @@ export default async function StockDetailPage({
         institution={stock.supply.institution}
         foreign={stock.supply.foreign}
       />
+      <SignalSection className="mb-8" signals={stock.signals} />
+      <NewsSection className="mb-8" news={stock.news} />
     </main>
   );
 }

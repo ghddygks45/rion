@@ -3,11 +3,12 @@ import Link from "next/link";
 
 type NewsProps = {
   news: { title: string; date: string }[];
+  className?: string;
 };
 
-export default function NewsSection({ news }: NewsProps) {
+export default function NewsSection({ news, className }: NewsProps) {
   return (
-    <div className="mb-8">
+    <div className={className}>
       <Title level={2}>최근 뉴스</Title>
       <ul className="mt-4 space-y-3">
         {news.map((item, i) => (

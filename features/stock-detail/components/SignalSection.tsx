@@ -1,14 +1,14 @@
-import Title from '@/components/ui/Title'
-import Tag from '@/components/ui/Tag'
-import { Signal } from '../types'
+import Title from "@/components/ui/Title";
+import Tag from "@/components/ui/Tag";
+import { Signal } from "../types";
 
 type Props = {
-  signals: Signal[]
-  className?: string
-}
+  signals: Signal[];
+  className?: string;
+};
 
 export default function SignalSection({ signals, className }: Props) {
-  if (signals.length === 0) return null
+  if (signals.length === 0) return null;
 
   return (
     <div className={className}>
@@ -19,5 +19,5 @@ export default function SignalSection({ signals, className }: Props) {
         ))}
       </div>
     </div>
-  )
+  );
 }
