@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { mockThemeDetails } from "@/features/theme-detail/mocks";
 import ThemeDetailHeader from "@/features/theme-detail/components/ThemeDetailHeader";
+import NewsSection from "@/features/theme-detail/components/NewsSection";
 
 export default async function ThemeDetailPage({
   params,
@@ -19,6 +20,7 @@ export default async function ThemeDetailPage({
         avgChangeRate={theme.avgChangeRate}
         summary={theme.summary}
       />
+      <NewsSection news={theme.news} />
     </main>
   );
 }
