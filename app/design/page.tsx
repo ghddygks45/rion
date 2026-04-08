@@ -1,6 +1,7 @@
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
+import Tag from "@/components/ui/Tag";
 import Title from "@/components/ui/Title";
 import StockTable, { StockRow } from "@/components/ui/StockTable";
 
@@ -46,6 +47,15 @@ export default function DesignPage() {
           <Badge variant="up">+2.45%</Badge>
           <Badge variant="down">-1.32%</Badge>
           <Badge variant="neutral">0.00%</Badge>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Title level={3}>Tag</Title>
+        <div className="flex gap-2">
+          <Tag>52주 신고가</Tag>
+          <Tag>이상 거래량</Tag>
+          <Tag>52주 신저가</Tag>
         </div>
       </div>
 

@@ -23,6 +23,7 @@ export default async function StockDetailPage({
         name={stock.name}
         price={stock.price}
         changeRate={stock.changeRate}
+        signals={stock.signals}
       />
       <SupplySection
         className="mb-8"
