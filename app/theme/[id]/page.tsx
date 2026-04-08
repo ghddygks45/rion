@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { mockThemeDetails } from "@/features/theme-detail/mocks";
 import ThemeDetailHeader from "@/features/theme-detail/components/ThemeDetailHeader";
 import NewsSection from "@/features/theme-detail/components/NewsSection";
+import StockDetailTable from "@/features/theme-detail/components/StockDetailTable";
 
 export default async function ThemeDetailPage({
   params,
@@ -21,6 +22,7 @@ export default async function ThemeDetailPage({
         summary={theme.summary}
       />
       <NewsSection news={theme.news} />
+      <StockDetailTable stocks={theme.stocks} />
     </main>
   );
 }
