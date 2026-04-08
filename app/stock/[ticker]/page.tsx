@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { mockStockDetails } from "@/features/stock-detail/mocks";
 import StockDetailHeader from "@/features/stock-detail/components/StockDetailHeader";
 import MarketOverview from "@/features/stock-detail/components/MarketOverview";
+import SupplySection from "@/features/stock-detail/components/SupplySection";
 
 export default async function StockDetailPage({
   params,
@@ -15,6 +16,7 @@ export default async function StockDetailPage({
 
   return (
     <main className="max-w-3xl mx-auto px-6 py-8">
+      <MarketOverview className="mb-8" marketIndices={stock.marketIndices} />
       <StockDetailHeader
         className="mb-8"
         ticker={stock.ticker}
@@ -22,7 +24,11 @@ export default async function StockDetailPage({
         price={stock.price}
         changeRate={stock.changeRate}
       />
-      <MarketOverview className="mb-8" marketIndices={stock.marketIndices} />
+      <SupplySection
+        className="mb-8"
+        institution={stock.supply.institution}
+        foreign={stock.supply.foreign}
+      />
     </main>
   );
 }
