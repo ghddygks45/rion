@@ -8,4 +8,4 @@
 |---|---|---|
 | [2026-03-27](./2026-03-27/session.md) | 프로젝트 기획 확정, 기술 스택 결정, 로드맵 수립, plan 1-1~1-4 완료 | Phase 1 완료, Phase 2 대기 중 |
 | [2026-03-28](./2026-03-28/session.md) | 로드맵 개편(테마 시스템 추가), plan 2-1 공통 컴포넌트 완료, plan 2-2 테마 시스템 완료 | plan 2-3 대기 중 |
-| [2026-04-07](./2026-04-07/session.md) | theme.tsx 리팩토링(lazy initializer + useEffect 분리), plan 2-3 오늘의 테마 목록 피처 완료 | plan 2-4 대기 중 |
+| [2026-04-07](./2026-04-07/session.md) | theme.tsx 리팩토링(lazy initializer + useEffect 분리), plan 2-3 오늘의 테마 목록 피처 완료, plan 2-4 테마 상세 피처 완료, Tailwind v4 다크모드 variant 수정, 학습 노트 구성 | plan 2-5 대기 중 |

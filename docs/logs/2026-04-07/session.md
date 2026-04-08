@@ -48,6 +48,20 @@ light 모드 저장 후 새로고침 시 `Encountered a script tag while renderi
 - theme.tsx 리팩토링 완료
 - plan 2-3 완료
 
+### plan 2-4. 테마 상세 피처
+
+구현 완료. 자세한 내용 → `docs/plans/2-4/report.md`
+
+주요 이슈: Tailwind v4 `dark:hover:` 미적용 문제 발견 및 해결.
+`@variant dark (&:is(.dark, .dark *))` 설정으로 해결.
+
+---
+
+## 현재 상태
+
+- plan 2-3 완료
+- plan 2-4 완료
+
 ## 다음 할 일
 
-- plan 2-4 진행
+- plan 2-5 진행
