@@ -139,20 +139,24 @@
 모든 UI 요소를 디자인 시스템화한다. 공통 컴포넌트뿐 아니라 도메인 특화 컴포넌트도 포함된다.
 
 **토큰 우선**
+
 - 색상, 간격, 폰트, 테두리 등 모든 값은 Tailwind 토큰으로만 사용한다.
 - 하드코딩 금지 (`text-[#D4A017]` ❌ → `text-primary` ✓)
 
 **컴포넌트 분류**
+
 - `components/ui/` — 도메인 무관한 순수 UI (Button, Badge, Card 등)
 - `features/*/components/` — 도메인 특화 UI (ThemeCard 등)
 - 재사용 가능하면 `components/ui/`로, 도메인 로직이 섞이면 `features/`로
 
 **Props 설계 기준**
+
 - variant로 시각적 변형을 표현한다 (`variant="up" | "down" | "neutral"`)
 - 스타일 관련 prop 직접 노출 금지 (`color`, `fontSize` 등)
 - 컴포넌트가 자기 외부 레이아웃(margin 등)을 스스로 갖지 않는다 — 부모가 배치
 
 **`/design` 페이지 관리**
+
 - 새 공통 컴포넌트(`components/ui/`) 추가 시 `/design` 페이지에 반드시 추가한다.
 
 ---
@@ -180,3 +184,7 @@
 /prisma               - schema.prisma
 /lib                  - 공용 유틸 (양쪽 사용)
 ```
+
+## sapabase 프로젝트 비밀번호(절대 지우면 안됨)
+
+JH4Nm3GkB0KaWQfC

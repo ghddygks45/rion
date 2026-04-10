@@ -5,7 +5,7 @@ import { Theme } from "../types";
 export function useThemes() {
   return useQuery<Theme[]>({
     queryKey: ["themes"],
-    refetchInterval: 10000,
+    // refetchInterval: 10000,
     queryFn: async () => {
       const res = await fetch("/api/kiwoom/themes");
       const data: Ka90001Response = await res.json();
