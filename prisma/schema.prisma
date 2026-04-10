@@ -11,3 +11,13 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model News {
+  id          Int      @id @default(autoincrement())
+  ticker      String
+  title       String
+  url         String   @unique
+  press       String
+  publishedAt DateTime
+  createdAt   DateTime @default(now())
+}
