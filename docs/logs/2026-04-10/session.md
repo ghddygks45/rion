@@ -62,6 +62,30 @@ News 모델 추가 및 Supabase 테이블 생성 완료. 자세한 내용 → `d
 - plan 3-3 완료
 - plan 3-4 완료
 
+## plan 3-5. 네이버 뉴스 크롤링 로직 구현
+
+네이버 금융 종목 뉴스 크롤링 함수 구현 완료. 자세한 내용 → `docs/plans/3-5/report.md`
+
+주요 내용:
+- `cheerio` 설치 (HTML 파싱)
+- `server/crawlers/naverNewsCrawler.ts` 구현
+- User-Agent 헤더로 차단 우회
+- 네이버 날짜 형식 파싱 (`2026.04.10 15:30` → Date 객체)
+
+---
+
+## 현재 상태
+
+- plan 3-3 완료
+- plan 3-4 완료
+- plan 3-5 완료
+
+## 현재 상태
+
+- plan 3-3 완료
+- plan 3-4 완료
+- plan 3-5 완료
+
 ## 다음 할 일
 
-- plan 3-5 진행 (네이버 뉴스 크롤링 로직 구현)
+- plan 3-6 진행 (크롤링 결과 DB 저장 로직)
