@@ -11,3 +11,4 @@
 | [2026-04-07](./2026-04-07/session.md) | theme.tsx 리팩토링(lazy initializer + useEffect 분리), plan 2-3 오늘의 테마 목록 피처 완료, plan 2-4 테마 상세 피처 완료, Tailwind v4 다크모드 variant 수정, 학습 노트 구성 | plan 2-5 대기 중 |
 | [2026-04-08](./2026-04-08/session.md) | plan 2-5 종목 상세 피처 완료, features/shared/components/NewsSection.tsx 공통 컴포넌트 도입, plan 3-1 키움 REST API 연결 완료, plan 3-2 테마 목록 실데이터 연결 완료 | plan 3-3 완료 |
 | [2026-04-10](./2026-04-10/session.md) | plan 3-3~3-5 완료 (Supabase+Prisma 연결, News 테이블, 네이버 뉴스 크롤링) | plan 3-6 대기 중 |
+| [2026-04-18](./2026-04-18/session.md) | Supabase 연결 이슈 해결 (dotenv 설치, IP 밴 해제, Session Pooler 전환), User 마이그레이션 완료, plan 3-6 완료 (DB 저장, API Route, 테스트 UI) | Phase 3 완료 |

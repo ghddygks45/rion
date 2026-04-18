@@ -3,21 +3,33 @@
 
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
+// Prisma 클라이언트를 어디에 생성할지 설정
+// output: 생성된 Prisma 코드가 lib/generated/prisma 폴더에 만들어진다
 generator client {
   provider = "prisma-client"
   output   = "../lib/generated/prisma"
 }
 
+// 어떤 DB를 쓸지 설정
+// DATABASE_URL은 .env 파일에 저장된 Supabase 연결 주소를 자동으로 읽어온다
 datasource db {
   provider = "postgresql"
 }
 
+// News 테이블: 크롤링한 뉴스 기사를 저장한다
 model News {
-  id          Int      @id @default(autoincrement())
-  ticker      String
-  title       String
-  url         String   @unique
-  press       String
-  publishedAt DateTime
-  createdAt   DateTime @default(now())
+  id          Int      @id @default(autoincrement()) // 자동으로 1씩 증가하는 고유 번호
+  ticker      String                                 // 종목 코드 (예: "삼성전자")
+  title       String                                 // 기사 제목
+  url         String   @unique                       // 기사 URL. @unique = 같은 URL은 중복 저장 안 됨
+  press       String                                 // 언론사 이름 (예: "한국경제")
+  publishedAt DateTime                               // 기사 발행 시각
+  createdAt   DateTime @default(now())               // DB에 저장된 시각. 자동으로 현재 시각이 들어간다
+}
+
+// User 테이블: 사용자 정보를 저장한다 (현재는 기본 구조만 잡아둔 상태)
+model User {
+  id    Int     @id @default(autoincrement()) // 자동으로 1씩 증가하는 고유 번호
+  email String  @unique                       // 이메일. 중복 불가
+  name  String?                               // 이름. ?는 없어도 되는 선택값이라는 뜻
 }

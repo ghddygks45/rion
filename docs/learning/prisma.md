@@ -206,3 +206,45 @@ DB 구조 변경을 **기록하고 적용**하는 과정이다. 단순히 테이
 ### migration.sql을 Git에 포함하는 이유
 
 새 환경(배포 서버, 팀원 PC)에서 `npx prisma migrate deploy`를 실행하면 이 파일들을 순서대로 적용해서 똑같은 DB 구조를 재현할 수 있다. DB의 버전 관리인 셈이다.
+
+---
+
+## Supabase + Prisma 연결 포트 (5432 vs 6543)
+
+Supabase에 연결하는 방법이 두 가지다.
+
+### 포트 5432 — 직접 연결 (Direct connection)
+
+```
+앱 → pg 라이브러리 → Supabase DB (포트 5432)
+```
+
+- DB 서버에 직접 연결하는 방식
+- 마이그레이션(`npx prisma migrate dev`)에 사용
+- **Vercel 서버리스 환경에서 문제 발생**: 요청마다 함수가 켜졌다 꺼지면서 DB 연결이 계속 새로 생성됨 → 연결이 수백 개 쌓여서 DB가 감당 못하고 터짐
+
+### 포트 6543 — 풀러 경유 (Connection Pooler)
+
+```
+앱 → pg 라이브러리 → Supabase Pooler (포트 6543) → Supabase DB
+```
+
+- 중간 다리(Pooler)를 거쳐서 연결하는 방식
+- 아무리 많은 요청이 와도 DB 연결은 최대 15개만 유지
+- **Vercel 배포 환경에서 필수**: 서버리스 특성상 연결이 폭발적으로 늘어나는 걸 막아줌
+
+### 왜 싱글톤 패턴만으로 해결이 안 되나
+
+`globalThis`에 Prisma 인스턴스를 캐시해서 재사용하는 싱글톤 패턴이 있다. 하지만 Vercel 서버리스는 함수가 완전히 꺼졌다 켜지면 `globalThis`가 초기화된다. 그러면 싱글톤 의미가 없어지고 매번 새 연결이 생긴다. 그래서 앱 레벨 코드만으로는 해결이 안 되고 Pooler가 필요하다.
+
+### 연결 문자열 형식
+
+```
+# 직접 연결 (마이그레이션용)
+postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres
+
+# 풀러 연결 (앱 런타임용, Vercel 배포)
+postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres
+```
+
+username 형식이 다르다: 직접 연결은 `postgres`, 풀러는 `postgres.[PROJECT-REF]`
