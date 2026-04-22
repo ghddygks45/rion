@@ -3,10 +3,11 @@ import Badge from "./Badge";
 import Title from "./Title";
 
 export type StockRow = {
+  code: string;
   name: string;
   price: number;
   changeRate: number;
-  volume: number;
+  volume?: number;
   href?: string;
 };
 
@@ -92,7 +93,9 @@ export default function StockTable({
                     </Badge>
                   </td>
                   <td className="py-3 pr-4 text-right text-text-secondary tabular-nums">
-                    {formatVolume(stock.volume)}
+                    {stock.volume !== undefined
+                      ? formatVolume(stock.volume)
+                      : "-"}
                   </td>
                 </tr>
               );

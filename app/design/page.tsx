@@ -6,9 +6,30 @@ import Title from "@/components/ui/Title";
 import StockTable, { StockRow } from "@/components/ui/StockTable";
 
 const mockStocks: StockRow[] = [
-  { name: "삼성전자", price: 73400, changeRate: 2.45, volume: 4320000000, href: "/stock/005930" },
-  { name: "SK하이닉스", price: 189500, changeRate: -1.32, volume: 2100000000, href: "/stock/000660" },
-  { name: "LG에너지솔루션", price: 412000, changeRate: 0, volume: 980000000, href: "/stock/373220" },
+  {
+    code: "000990_AL",
+    name: "삼성전자",
+    price: 73400,
+    changeRate: 2.45,
+    volume: 4320000000,
+    href: "/stock/005930",
+  },
+  {
+    code: "000660_KR",
+    name: "SK하이닉스",
+    price: 189500,
+    changeRate: -1.32,
+    volume: 2100000000,
+    href: "/stock/000660",
+  },
+  {
+    code: "373220_KR",
+    name: "LG에너지솔루션",
+    price: 412000,
+    changeRate: 0,
+    volume: 980000000,
+    href: "/stock/373220",
+  },
 ];
 
 export default function DesignPage() {
@@ -37,7 +58,9 @@ export default function DesignPage() {
         <div className="flex gap-3">
           <Button variant="primary">조회하기</Button>
           <Button variant="secondary">취소</Button>
-          <Button variant="primary" disabled>비활성</Button>
+          <Button variant="primary" disabled>
+            비활성
+          </Button>
         </div>
       </div>
 

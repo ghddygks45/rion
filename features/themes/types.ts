@@ -1,9 +1,16 @@
-import { StockRow } from '@/components/ui/StockTable'
+import { StockRow } from "@/components/ui/StockTable";
+
+export type themeStock = {
+  code: string;
+  name: string;
+  price: number;
+  changeRate: number;
+};
 
 export type Theme = {
-  id: string
-  name: string
-  summary: string
-  avgChangeRate: number
-  stocks: StockRow[]
-}
+  id: string;
+  name: string;
+  avgChangeRate: number;
+  main_stk: string;
+  stocks: themeStock[];
+};
