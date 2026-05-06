@@ -1,21 +1,23 @@
-import { getKiwoomToken } from './auth'
+import { getKiwoomToken } from "./auth";
 
 export async function kiwoomFetch<T>(
   url: string,
   apiId: string,
-  body: Record<string, string>
+  body: Record<string, string>,
 ): Promise<T> {
-  const token = await getKiwoomToken()
+  const token = await getKiwoomToken();
 
   const res = await fetch(`https://api.kiwoom.com${url}`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json;charset=UTF-8',
-      'authorization': `Bearer ${token}`,
-      'api-id': apiId,
+      "Content-Type": "application/json;charset=UTF-8",
+      authorization: `Bearer ${token}`,
+      "api-id": apiId,
+      "cont-yn": "N",
+      "next-key": "N",
     },
     body: JSON.stringify(body),
-  })
+  });
 
-  return res.json() as Promise<T>
+  return res.json() as Promise<T>;
 }

@@ -1,36 +1,28 @@
 import Link from "next/link";
 import Badge from "./Badge";
 import Title from "./Title";
-
-export type StockRow = {
-  code: string;
-  name: string;
-  price: number;
-  changeRate: number;
-  volume?: number;
-  href?: string;
-};
-
-type StockTableProps = {
-  stocks: StockRow[];
-  title?: string;
-  className?: string;
-};
+import { themeStock } from "@/features/themes/types";
 
 function formatPrice(price: number) {
   return price.toLocaleString("ko-KR") + "원";
 }
 
 function formatVolume(volume: number) {
-  if (volume >= 100_000_000) return (volume / 100_000_000).toFixed(0) + "억";
-  if (volume >= 10_000) return (volume / 10_000).toFixed(0) + "만";
-  return volume.toLocaleString("ko-KR");
+  const billion = volume / 100;
+  if (billion >= 10_000) return (billion / 10_000).toFixed(1) + "조";
+  return Math.round(billion) + "억";
 }
 
 function formatChangeRate(rate: number) {
   const sign = rate > 0 ? "+" : "";
   return `${sign}${rate.toFixed(2)}%`;
 }
+
+type StockTableProps = {
+  stocks: themeStock[];
+  title?: string;
+  className?: string;
+};
 
 export default function StockTable({
   stocks,
@@ -47,7 +39,7 @@ export default function StockTable({
         </div>
       )}
 
-      <div className="">
+      <div>
         <table className="w-full text-sm table-fixed">
           <thead>
             <tr className="text-left">
@@ -79,10 +71,11 @@ export default function StockTable({
                   className="relative border-t border-border hover:bg-black/5 dark:hover:bg-white/20"
                 >
                   <td className="py-3 pl-4 text-text font-medium">
-                    {stock.href && (
-                      <Link href={stock.href} className="absolute inset-0" />
-                    )}
-                    {stock.name}
+                    <Link
+                      href={`/stock/${stock.stockCode}`}
+                      className="absolute inset-0"
+                    />
+                    {stock.stockName}
                   </td>
                   <td className="py-3 text-right text-text tabular-nums">
                     {formatPrice(stock.price)}

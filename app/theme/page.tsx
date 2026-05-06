@@ -2,6 +2,8 @@
 
 import Title from "@/components/ui/Title";
 import ThemeCard from "@/features/themes/components/ThemeCard";
+import { useStockTopVolum } from "@/features/themes/hooks/useStockTopVolum";
+import { useThemestocks } from "@/features/themes/hooks/useTemeStocks";
 import { useThemes } from "@/features/themes/hooks/useThemes";
 
 export default function ThemesPage() {
@@ -26,8 +28,9 @@ export default function ThemesPage() {
         <Title level={1}>오늘의 테마</Title>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* 내가 가공한 데이터의 map으로 돌려서 카드를 만든다. */}
         {themes?.map((theme) => (
-          <ThemeCard key={theme.id} theme={theme} />
+          <ThemeCard key={theme.themeId} theme={theme} />
         ))}
       </div>
     </main>
