@@ -1,4 +1,4 @@
-export interface ResponseBodyOutput {
+export type ResponseBodyOutput = {
   bstp_nmix_prpr: string;
   bstp_nmix_prdy_vrss: string;
   prdy_vrss_sign: string;
@@ -35,9 +35,9 @@ export interface ResponseBodyOutput {
   seln_rsqn_rate: string;
   shnu_rsqn_rate: string;
   ntby_rsqn: string;
-}
+};
 
-export interface MarketIndexResponse {
+export type MarketIndexResponse = {
   bstp_nmix_prpr: string; // 업종 지수 현재가
   bstp_nmix_prdy_vrss: string; // 업종 지수 전일 대비
   prdy_vrss_sign: string; // 전일 대비 부호
@@ -85,4 +85,22 @@ export interface MarketIndexResponse {
   shnu_rsqn_rate: string; // 매수 잔량 비율
 
   ntby_rsqn: string; // 순매수 잔량
-}
+};
+
+export type GlobalMarketResponse = {
+  data_date: string; // 일자
+  data_time: string; // 시각
+
+  open_price: string; // 시가
+  high_price: string; // 고가
+  low_price: string; // 저가
+
+  last_price: string; // 체결가격
+  last_qntt: string; // 체결수량
+
+  vol: string; // 누적거래수량
+
+  prev_diff_flag: string; // 전일대비구분
+  prev_diff_price: string; // 전일대비가격
+  prev_diff_rate: string; // 전일대비율
+};

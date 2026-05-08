@@ -3,7 +3,7 @@ import { kiwoomFetch } from "@/server/kiwoom/kiwoomFetcher";
 import {
   Ka90001Response,
   Ka90002Response,
-  Ka10032Response,
+  topVolume,
 } from "@/server/kiwoom/types";
 
 export async function GET() {

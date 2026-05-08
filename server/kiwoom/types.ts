@@ -134,3 +134,56 @@ export type DailyTradeDetail = {
 export type Ka10015Response = {
   daly_trde_dtl: DailyTradeDetail[];
 };
+
+export type PopularStock = {
+  stk_nm: string; // 종목명
+  bigd_rank: string; // 조회순위
+  rank_chg: string; // 순위변동
+  rank_chg_sign: string; // 순위변동부호
+  past_curr_prc: string; // 현재가
+  base_comp_sign: string; // 기준가대비부호
+  base_comp_chgr: string; // 기준가대비등락률
+  prev_base_sign: string; // 전일대비부호
+  prev_base_chgr: string; // 전일대비등락률
+  dt: string; // 날짜
+  tm: string; // 시간
+  stk_cd: string; // 종목코드
+};
+
+export type topChangeRateStock = {
+  stk_cd: string; // 종목코드
+  stk_infr: string; // 종목정보
+  stk_nm: string; // 종목명
+  cur_prc: string; // 현재가
+  pred_pre_sig: string; // 전일대비부호
+  pred_pre: string; // 전일대비
+  flu_rt: string; // 등락률
+  trde_qty: string; // 거래량
+  pred_trde_qty: string; // 예상거래량
+  sel_req: string; // 매도잔량
+  sel_bid: string; // 매도호가
+  buy_bid: string; // 매수호가
+  buy_req: string; // 매수잔량
+  cnt: string; // 건수
+};
+
+export type topProgramBuys = {
+  cntr_tm: string; // 체결시간
+  dfrt_trde_sel: string; // 차익 매도
+  dfrt_trde_buy: string; // 차익 매수
+  dfrt_trde_netprps: string; // 차익 순매수
+  ndiffpro_trde_sel: string; // 비차익 매도
+  ndiffpro_trde_buy: string; // 비차익 매수
+  ndiffpro_trde_netprps: string; // 비차익 순매수
+  dfrt_trde_sell_qty: string; // 차익 매도 수량
+  dfrt_trde_buy_qty: string; // 차익 매수 수량
+  dfrt_trde_netprps_qty: string; // 차익 순매수 수량
+  ndiffpro_trde_sell_qty: string; // 비차익 매도 수량
+  ndiffpro_trde_buy_qty: string; // 비차익 매수 수량
+  ndiffpro_trde_netprps_qty: string; // 비차익 순매수 수량
+  all_sel: string; // 전체 매도
+  all_buy: string; // 전체 매수
+  all_netprps: string; // 전체 순매수
+  kospi200: string; // 코스피200
+  basis: string; // 베이시스
+};
