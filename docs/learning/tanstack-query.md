@@ -91,3 +91,154 @@ return data.thema_grp.map((item) => ({
 
 `useQuery`는 브라우저에서만 실행되는 훅이다.
 Next.js 서버 컴포넌트에서는 쓸 수 없어서 `"use client"`를 파일 맨 위에 추가해야 한다.
+
+---
+
+## useQuery 제네릭 타입
+
+`useQuery<T>`의 T는 **queryFn이 최종적으로 return하는 값의 타입**이다.
+
+```ts
+// queryFn이 MarketIndexResponse를 return → 제네릭도 MarketIndexResponse
+useQuery<MarketIndexResponse>({
+  queryFn: async () => res.json() as MarketIndexResponse,
+})
+
+// queryFn이 { price, changeRate }를 return → 제네릭도 그거
+useQuery<{ price: number; changeRate: number }>({
+  queryFn: async () => ({ price: 100, changeRate: 2.5 }),
+})
+
+// 제네릭 생략 → TypeScript가 return값 보고 자동 추론 (가장 단순)
+useQuery({
+  queryFn: async () => ({ price: 100, changeRate: 2.5 }),
+})
+```
+
+### 자주 하는 실수
+
+```ts
+// ❌ 제네릭은 MarketIndexResponse인데 실제 return은 { price, changeRate }
+useQuery<MarketIndexResponse>({
+  queryFn: async () => {
+    return { price: 100, changeRate: 2.5 }; // 타입 충돌 에러
+  },
+})
+```
+
+제네릭과 실제 return 타입이 다르면 TypeScript 에러가 난다.  
+제네릭을 생략하면 TypeScript가 알아서 추론해주므로 가장 단순하다.
+
+---
+
+## API 필드명 변환 — 어디서 할까
+
+외부 API(특히 증권사)는 필드명이 `bstp_nmix_prpr`, `bstp_nmix_prdy_ctrt` 처럼 읽기 어렵다.  
+화면에서 쓸 `price`, `changeRate` 같은 이름으로 바꾸는 작업을 어디서 할지 결정해야 한다.
+
+### 선택지 비교
+
+| 위치 | 특징 |
+|------|------|
+| route.ts | route가 변환 책임까지 가짐 |
+| queryFn 안 | 단순, 캐시에 가공본 저장 |
+| select | 캐시엔 원본, 컴포넌트엔 가공본 |
+| 컴포넌트 안 | UI에 데이터 로직이 섞임 ❌ |
+
+### queryFn 안에서 변환하는 방법
+
+```ts
+export function useDomesticMarket() {
+  return useQuery({
+    queryKey: ["domesticMarket"],
+    queryFn: async () => {
+      const res = await fetch("/api/hankuk/domestic-market");
+      const raw = await res.json(); // raw는 중간 변수
+      return {
+        price: Number(raw.kospi.output.bstp_nmix_prpr),
+        changeRate: Number(raw.kospi.output.bstp_nmix_prdy_ctrt),
+      };
+    },
+  });
+}
+```
+
+- `MarketIndexResponse` 타입은 `raw`의 타입이지, `useQuery` 제네릭과 상관없다
+- `queryFn`이 return하는 것은 `{ price, changeRate }`이므로 제네릭은 생략하고 추론에 맡긴다
+
+---
+
+## select — 언제 쓰고 왜 쓰나
+
+### 기본 개념
+
+`select`는 캐시에 저장된 원본 데이터를 컴포넌트에 전달하기 전에 변환하는 옵션이다.
+
+```ts
+useQuery<MarketIndexResponse, Error, { price: number; changeRate: number }>({
+  queryFn: async () => res.json() as MarketIndexResponse, // 원본 그대로 return
+  select: (raw) => ({                                      // 여기서 변환
+    price: Number(raw.kospi.output.bstp_nmix_prpr),
+    changeRate: Number(raw.kospi.output.bstp_nmix_prdy_ctrt),
+  }),
+})
+```
+
+- 캐시에는 `MarketIndexResponse` (원본) 저장
+- 컴포넌트가 받는 `data`는 `{ price: number; changeRate: number }` (변환본)
+
+### select가 빛나는 상황 — 리렌더 최적화
+
+```ts
+// 컴포넌트 A — price만 필요
+useQuery({ ..., select: (data) => data.kospi.price })
+
+// 컴포넌트 B — volume만 필요
+useQuery({ ..., select: (data) => data.kospi.volume })
+```
+
+같은 캐시를 공유하면서, price가 바뀌면 A만 리렌더링, volume이 바뀌면 B만 리렌더링된다.  
+**select가 반환하는 값이 바뀔 때만** 해당 컴포넌트가 리렌더링된다.
+
+### select가 굳이 필요 없는 상황
+
+같은 데이터를 컴포넌트들이 **비슷하게** 쓴다면 `queryFn` 안에서 변환해도 충분하다.  
+주식 지수 데이터는 어차피 전체가 한 번에 바뀌기 때문에 select로 최적화할 여지가 거의 없다.
+
+---
+
+## 기본 재요청 동작 (refetch 기본 설정)
+
+TanStack Query는 기본적으로 **3가지 상황에서 자동으로 재요청**한다.
+
+```
+1. refetchOnMount       — 컴포넌트가 마운트될 때
+2. refetchOnWindowFocus — 다른 탭 갔다가 돌아올 때  ← 가장 자주 체감
+3. refetchOnReconnect   — 네트워크 끊겼다 다시 연결될 때
+```
+
+### staleTime
+
+`staleTime` 기본값은 `0`이다. 데이터를 받자마자 "오래된 데이터"로 간주한다.  
+그래서 위 3가지 상황이 발생하면 바로 재요청한다.
+
+```ts
+useQuery({
+  queryKey: ["domesticMarket"],
+  queryFn: async () => { ... },
+  staleTime: 1000 * 60, // 1분 동안은 신선한 데이터로 간주 → 재요청 안 함
+})
+```
+
+개발 중에 탭을 자주 전환하면 콘솔에 API 요청이 계속 찍히는 것을 볼 수 있는데, 그게 `refetchOnWindowFocus` 때문이다.
+
+### 재요청 후 리렌더링
+
+재요청이 완료되면 `data`가 새로 바뀌므로 컴포넌트가 리렌더링된다.
+
+```
+탭 전환 → refetchOnWindowFocus → API 재요청 → 새 data 도착 → 리렌더링
+```
+
+단, **이전 데이터와 값이 같으면 리렌더링 안 한다.**  
+TanStack Query가 내부적으로 비교해서 실제로 값이 바뀐 경우에만 리렌더링을 트리거한다.

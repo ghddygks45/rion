@@ -59,6 +59,51 @@ type Props = {
 
 ---
 
+## UI 타입 어디에 정의할까
+
+### 기준: 어디서 쓰이나
+
+**한 파일에서만 쓰임 → 그 파일 안에 바로 작성**
+
+```ts
+// ThemeCard.tsx 안에서만 쓰는 타입
+type ThemeCardProps = {
+  name: string;
+  changeRate: number;
+};
+```
+
+**여러 파일에서 공유 → 별도 types.ts**
+
+```
+features/themes/
+├── components/ThemeCard.tsx
+├── hooks/useThemes.ts
+└── types.ts  ← 둘 다 import해서 쓸 때
+```
+
+### 이 프로젝트 기준
+
+| 타입 종류 | 위치 |
+|----------|------|
+| props 타입 | 컴포넌트 파일 안 |
+| 훅 반환 타입 | 훅 파일 안 |
+| 페이지 + 컴포넌트 + 훅이 공유 | `features/[도메인]/types.ts` |
+| 서버 API 원시 타입 | `server/[서비스]/types.ts` |
+
+처음엔 쓰는 파일 안에 두고, 여러 곳에서 쓰이기 시작하면 그때 분리한다. 미리 분리하지 않는다.
+
+### 서버 타입을 훅에서 쓰면 안 되는 이유
+
+`server/hankuk/types.ts`의 `MarketIndexResponse`는 증권사 API 원시 응답 타입이다.  
+`bstp_nmix_prpr` 같은 필드명 그대로다.  
+이걸 훅이나 컴포넌트에서 직접 쓰면 서버 관심사가 UI 코드까지 침투하게 된다.
+
+훅의 `queryFn` 안에서 변환해서 clean한 이름으로 return하면,  
+컴포넌트는 서버 타입을 전혀 몰라도 된다.
+
+---
+
 ## optional 필드 (?)
 
 `?`를 붙이면 있어도 되고 없어도 되는 필드가 된다.

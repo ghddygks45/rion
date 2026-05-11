@@ -4,6 +4,46 @@
 
 `"use client"`는 "클라이언트에서만 실행"이 아니라 "클라이언트 기능(useState, useEffect 등)을 쓸 수 있다"는 선언이다.
 
+### 훅을 쓰는 페이지에서 발생하는 에러
+
+```
+Error: Attempted to call useQuery() from the server but useQuery is on the client.
+```
+
+App Router에서 모든 페이지는 기본적으로 **Server Component**다.  
+`useQuery`, `useState`, `useEffect` 같은 훅은 브라우저 전용이므로 Server Component에서 쓰면 이 에러가 난다.
+
+```tsx
+// ❌ 에러 — "use client" 없이 훅 사용
+export default function Test() {
+  const { data } = useDomesticMarket(); // useQuery 내부에서 에러
+}
+
+// ✓ 해결 — "use client" 추가
+"use client";
+
+export default function Test() {
+  const { data } = useDomesticMarket(); // 정상 동작
+}
+```
+
+### 컴포넌트 이름은 반드시 대문자
+
+React는 컴포넌트 이름이 대문자로 시작해야 컴포넌트로 인식한다.  
+소문자면 훅을 써도 "React 컴포넌트가 아닌 함수에서 훅을 호출했다"는 ESLint 에러가 난다.
+
+```tsx
+// ❌ ESLint 에러
+export default function test() {
+  const { data } = useDomesticMarket();
+}
+
+// ✓ 대문자로 시작
+export default function Test() {
+  const { data } = useDomesticMarket();
+}
+```
+
 ```ts
 "use client"  // 이게 있어야 useState, useEffect 사용 가능
 ```
