@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { kiwoomFetch } from "@/server/kiwoom/kiwoomFetcher";
-import { PopularStock } from "@/server/kiwoom/types";
+import { PopularStockResponse } from "@/server/kiwoom/types";
 
 export async function GET() {
-  const data = await kiwoomFetch<PopularStock[]>(
+  const data = await kiwoomFetch<PopularStockResponse>(
     "/api/dostk/stkinfo",
     "ka00198",
     {

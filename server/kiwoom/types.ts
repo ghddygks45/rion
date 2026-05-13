@@ -66,12 +66,6 @@ export type topVolumeResponse = {
   return_msg: string;
 };
 
-export type Ka10032Response = {
-  trde_prica_upper: topVolume[];
-  return_code: number;
-  return_msg: string;
-};
-
 // 종목정보 조회
 export type Ka10100Response = {
   code: number;
@@ -139,6 +133,10 @@ export type DailyTradeDetail = {
 
 export type Ka10015Response = {
   daly_trde_dtl: DailyTradeDetail[];
+};
+
+export type PopularStockResponse = {
+  item_inq_rank: PopularStock[];
 };
 
 export type PopularStock = {

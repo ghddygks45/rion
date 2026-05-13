@@ -1,5 +1,5 @@
 import Title from "@/components/ui/Title";
-import { useTopVolumeStock } from "@/features/shared/topVolumeStock/useTopVolumeStock";
+import { useTopVolumeStock } from "./useTopVolumeStock";
 
 export default function TopVolumeStock() {
   const { data: stocks, isLoading, error } = useTopVolumeStock();

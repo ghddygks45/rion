@@ -20,3 +20,10 @@ export type TopVolumeStock = {
   volume: number;
   rank?: number;
 };
+
+export type PopularStock = {
+  stockName: string;
+  rank: number;
+  price: number;
+  changeRate: number;
+};

@@ -1,5 +1,6 @@
 "use client";
 
+import PopularStock from "@/features/shared/popularStock/PopularStock";
 // import DomesticMarket from "@/features/shared/domesticMarket/hooks/DomesticMarket";
 import TopChangeRateStock from "@/features/shared/topChangeRateStock/TopChangeRateStock";
 import TopVolumeStock from "@/features/shared/topVolumeStock/TopVolumeStock";
@@ -8,7 +9,7 @@ export default function Test() {
   return (
     <>
       <h1>test Component</h1>
-      <TopVolumeStock />
+      <PopularStock />
     </>
   );
 }
