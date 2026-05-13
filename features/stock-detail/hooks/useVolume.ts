@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { Ka10015Response } from "@/server/kiwoom/types";
+import { KiwoomDailyTradeDetailResponse } from "@/server/kiwoom/types";
 
 export function useVolume(stockCodes: string[]) {
-  return useQuery<Ka10015Response>({
+  return useQuery<KiwoomDailyTradeDetailResponse>({
     queryKey: ["volume", stockCodes],
     enabled: stockCodes.length > 0,
     queryFn: async () => {

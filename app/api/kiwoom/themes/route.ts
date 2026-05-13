@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { kiwoomFetch } from "@/server/kiwoom/kiwoomFetcher";
-import { Ka90001Response } from "@/server/kiwoom/types";
+import { KiwoomThemeGroupResponse } from "@/server/kiwoom/types";
 
 export async function GET() {
-  const themesData = await kiwoomFetch<Ka90001Response>(
+  const themesData = await kiwoomFetch<KiwoomThemeGroupResponse>(
     "/api/dostk/thme",
     "ka90001",
     {

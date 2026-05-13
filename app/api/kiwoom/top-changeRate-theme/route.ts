@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { kiwoomFetch } from "@/server/kiwoom/kiwoomFetcher";
 import {
-  Ka10015Response,
-  Ka90001Response,
-  Ka90002Response,
+  KiwoomDailyTradeDetailResponse,
+  KiwoomThemeGroupResponse,
+  KiwoomThemeStockResponse,
   KiwoomThemeStock,
 } from "@/server/kiwoom/types";
 
@@ -24,7 +24,7 @@ const delay = () => new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
 
 // 질문 제네럴타입이 KiwoomThemeStock[]가 되는 이유?
 async function fetchThemeStocks(themeId: string): Promise<KiwoomThemeStock[]> {
-  const data = await kiwoomFetch<Ka90002Response>(
+  const data = await kiwoomFetch<KiwoomThemeStockResponse>(
     "/api/dostk/thme",
     "ka90002",
     {
@@ -38,7 +38,7 @@ async function fetchThemeStocks(themeId: string): Promise<KiwoomThemeStock[]> {
 
 // 질문 제네럴타입이 string이 되는 이유?
 async function fetchVolumeAddedStocks(stockId: string): Promise<string> {
-  const data = await kiwoomFetch<Ka10015Response>(
+  const data = await kiwoomFetch<KiwoomDailyTradeDetailResponse>(
     "/api/dostk/stkinfo",
     "ka10015",
     {
@@ -52,7 +52,7 @@ async function fetchVolumeAddedStocks(stockId: string): Promise<string> {
 export async function GET() {
   try {
     // 테마 목록 가져오기
-    const themesData = await kiwoomFetch<Ka90001Response>(
+    const themesData = await kiwoomFetch<KiwoomThemeGroupResponse>(
       "/api/dostk/thme",
       "ka90001",
       {

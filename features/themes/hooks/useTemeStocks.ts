@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Ka90002Response } from "@/server/kiwoom/types";
+import { KiwoomThemeStockResponse } from "@/server/kiwoom/types";
 import { themeStock } from "../types";
 
 export function useThemestocks(themeId: string, themeName: string) {
@@ -7,7 +7,7 @@ export function useThemestocks(themeId: string, themeName: string) {
     queryKey: ["themestocks", themeId],
     queryFn: async () => {
       const res = await fetch(`/api/kiwoom/themestocks?themeId=${themeId}`);
-      const data: Ka90002Response = await res.json();
+      const data: KiwoomThemeStockResponse = await res.json();
       return data.thema_comp_stk.map((stock) => ({
         themeName: themeName,
         themeId: themeId,

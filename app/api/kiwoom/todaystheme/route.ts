@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
 import { kiwoomFetch } from "@/server/kiwoom/kiwoomFetcher";
 import {
-  Ka90001Response,
-  Ka90002Response,
-  topVolume,
+  KiwoomThemeGroupResponse,
+  KiwoomThemeStockResponse,
 } from "@/server/kiwoom/types";
 
 export async function GET() {
   try {
-    const themesData = await kiwoomFetch<Ka90001Response>(
+    const themesData = await kiwoomFetch<KiwoomThemeGroupResponse>(
       "/api/dostk/thme",
       "ka90001",
       {
@@ -32,7 +31,7 @@ export async function GET() {
 
       const themeStocksList = await Promise.all(
         batch.map(async (theme) => {
-          const themeStocksData = await kiwoomFetch<Ka90002Response>(
+          const themeStocksData = await kiwoomFetch<KiwoomThemeStockResponse>(
             "/api/dostk/thme",
             "ka90002",
             {

@@ -1,4 +1,4 @@
-import { useDomesticMarket } from "@/features/shared/domesticMarket/hooks/useDomesticMarket";
+import { useDomesticMarket } from "@/features/shared/domesticMarket/useDomesticMarket";
 
 export default function DomesticMarket() {
   const { data, isLoading, error } = useDomesticMarket();

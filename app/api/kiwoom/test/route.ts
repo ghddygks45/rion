@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { kiwoomFetch } from "@/server/kiwoom/kiwoomFetcher";
-import { Ka10015Response } from "@/server/kiwoom/types";
+import { KiwoomDailyTradeDetailResponse } from "@/server/kiwoom/types";
 
 const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
 
 export async function GET() {
-  const detail = await kiwoomFetch<Ka10015Response>(
+  const detail = await kiwoomFetch<KiwoomDailyTradeDetailResponse>(
     "/api/dostk/stkinfo",
     "ka10015",
     {

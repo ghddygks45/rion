@@ -1,45 +1,40 @@
-// ka90001 응답 타입
-
-import { StringFilter } from "@/lib/generated/prisma/commonInputTypes";
-
-// 테마 그룹별 요청
+// 테마그룹별요청(ka90001)
 export type KiwoomThemeGroup = {
-  thema_grp_cd: string;
-  thema_nm: string;
-  stk_num: string;
-  flu_sig: string;
-  flu_rt: string;
-  rising_stk_num: string;
-  fall_stk_num: string;
-  dt_prft_rt: string;
-  main_stk: string;
+  thema_grp_cd: string; // 테마코드
+  thema_nm: string; // 테마명
+  stk_num: string; // 종목수
+  flu_sig: string; // 등락기호
+  flu_rt: string; // 등락률
+  rising_stk_num: string; // 상승종목수
+  fall_stk_num: string; // 하락종목수
+  dt_prft_rt: string; // 기간수익률
+  main_stk: string; // 주요종목
 };
 
-export type Ka90001Response = {
+export type KiwoomThemeGroupResponse = {
   thema_grp: KiwoomThemeGroup[];
   return_code: number;
   return_msg: string;
 };
 
-// ka90002 응답 타입
-// 테마 그룹별 요청
+// 테마구성종목요청(ka90002)
 export type KiwoomThemeStock = {
-  stk_cd: string;
-  stk_nm: string;
-  cur_prc: string;
-  flu_sig: string;
-  pred_pre: string;
-  flu_rt: string;
-  acc_trde_qty: string;
-  sel_bid: string;
-  sel_req: string;
-  buy_bid: string;
-  buy_req: string;
-  dt_prft_rt_n: string;
+  stk_cd: string; // 종목코드
+  stk_nm: string; // 종목명
+  cur_prc: string; // 현재가
+  flu_sig: string; // 등락기호
+  pred_pre: string; // 전일대비
+  flu_rt: string; // 등락율
+  acc_trde_qty: string; // 누적거래량
+  sel_bid: string; // 매도호가
+  sel_req: string; // 매도잔량
+  buy_bid: string; // 매수호가
+  buy_req: string; // 매수잔량
+  dt_prft_rt_n: string; // 기간수익률
   trade_prica?: string | undefined;
 };
 
-export type Ka90002Response = {
+export type KiwoomThemeStockResponse = {
   thema_comp_stk: KiwoomThemeStock[];
   flu_rt: string;
   dt_prft_rt: string;
@@ -47,44 +42,45 @@ export type Ka90002Response = {
   return_msg: string;
 };
 
-export type topVolume = {
-  stk_cd: string;
-  now_rank: string;
-  pred_rank: string;
-  stk_nm: string;
-  cur_prc: string;
-  pred_pre_sig: string;
-  pred_pre: string;
-  flu_rt: string;
-  sel_bid: string;
-  buy_bid: string;
-  now_trde_qty: string;
-  pred_trde_qty: string;
-  trde_prica: string;
+// 거래대금상위요청(ka10032)
+export type KiwoomTopVolume = {
+  stk_cd: string; // 종목코드
+  now_rank: string; // 현재순위
+  pred_rank: string; // 전일순위
+  stk_nm: string; // 종목명
+  cur_prc: string; // 현재가
+  pred_pre_sig: string; // 전일대비기호
+  pred_pre: string; // 전일대비
+  flu_rt: string; // 등락률
+  sel_bid: string; // 매도호가
+  buy_bid: string; // 매수호가
+  now_trde_qty: string; // 현재거래량
+  pred_trde_qty: string; // 전일거래량
+  trde_prica: string; // 거래대금
 };
 
-export type topVolumeResponse = {
-  trde_prica_upper: topVolume[];
+export type KiwoomTopVolumeResponse = {
+  trde_prica_upper: KiwoomTopVolume[];
   return_code: number;
   return_msg: string;
 };
 
 // 종목정보 조회
-export type Ka10100Response = {
-  code: number;
-  name: string;
-  listCount: string;
-  auditInfo: string;
-  regDay: string;
-  lastPrice: string;
-  state: string;
-  marketCode: string;
-  marketName: string;
-  upName: string;
-  upSizeName: string;
-  companyClassName: string;
-  orderWarning: string;
-  nxtEnable: string;
+export type KiwoomStockInfoResponse = {
+  code: number; // 종목코드
+  name: string; // 종목명
+  listCount: string; // 상장주식수
+  auditInfo: string; // 감리구분
+  regDay: string; // 상장일
+  lastPrice: string; // 전일종가
+  state: string; // 종목상태
+  marketCode: string; // 시장구분코드
+  marketName: string; // 시장명
+  upName: string; // 업종명
+  upSizeName: string; // 회사크기분류
+  companyClassName: string; // 회사분류
+  orderWarning: string; // 투자유의종목여부
+  nxtEnable: string; // NXT기능여부
   return_code: number;
   return_msg: string;
 };
@@ -94,48 +90,42 @@ export type KiwoomThemeGroupWithStocks = KiwoomThemeGroup & {
   stocks: KiwoomThemeStock[];
 };
 
-// 종목정보상세 (일별 거래 상세)
-export type DailyTradeDetail = {
-  dt: string;
-  close_pric: string;
-  pred_pre_sig: string;
-  pred_pre: string;
-  flu_rt: string;
-  trde_qty: string;
-  trde_prica: string;
-
-  bf_mkrt_trde_qty: string;
-  bf_mkrt_trde_wght: string;
-  opmr_trde_qty: string;
-  opmr_trde_wght: string;
-  af_mkrt_trde_qty: string;
-  af_mkrt_trde_wght: string;
-
-  tot_3: string;
-  prid_trde_qty: string;
-
-  cntr_str: string;
-
-  for_poss: string;
-  for_wght: string;
-  for_netprps: string;
-  orgn_netprps: string;
-  ind_netprps: string;
-  frgn: string;
-
-  crd_remn_rt: string;
-  prm: string;
-
-  bf_mkrt_trde_prica: string;
-  bf_mkrt_trde_prica_wght: string;
-  opmr_trde_prica: string;
-  opmr_trde_prica_wght: string;
-  af_mkrt_trde_prica: string;
-  af_mkrt_trde_prica_wght: string;
+// 일별거래상세(ka10015)
+export type KiwoomDailyTradeDetail = {
+  dt: string; // 일자
+  close_pric: string; // 종가
+  pred_pre_sig: string; // 전일대비기호
+  pred_pre: string; // 전일대비
+  flu_rt: string; // 등락율
+  trde_qty: string; // 거래량
+  trde_prica: string; // 거래대금
+  bf_mkrt_trde_qty: string; // 장전거래량
+  bf_mkrt_trde_wght: string; // 장전거래비중
+  opmr_trde_qty: string; // 장중거래량
+  opmr_trde_wght: string; // 장중거래비중
+  af_mkrt_trde_qty: string; // 장후거래량
+  af_mkrt_trde_wght: string; // 장후거래비중
+  tot_3: string; // 합계3
+  prid_trde_qty: string; // 기간중거래량
+  cntr_str: string; // 체결강도
+  for_poss: string; // 외인보유
+  for_wght: string; // 외인비중
+  for_netprps: string; // 외인순매수
+  orgn_netprps: string; // 기관순매수
+  ind_netprps: string; // 개인순매수
+  frgn: string; // 외국계
+  crd_remn_rt: string; // 신용잔고율
+  prm: string; // 프로그램
+  bf_mkrt_trde_prica: string; // 장전거래대금
+  bf_mkrt_trde_prica_wght: string; // 장전거래대금비중
+  opmr_trde_prica: string; // 장중거래대금
+  opmr_trde_prica_wght: string; // 장중거래대금비중
+  af_mkrt_trde_prica: string; // 장후거래대금
+  af_mkrt_trde_prica_wght: string; // 장후거래대금비중
 };
 
-export type Ka10015Response = {
-  daly_trde_dtl: DailyTradeDetail[];
+export type KiwoomDailyTradeDetailResponse = {
+  daly_trde_dtl: KiwoomDailyTradeDetail[];
 };
 
 export type PopularStockResponse = {
