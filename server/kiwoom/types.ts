@@ -1,4 +1,7 @@
 // ka90001 응답 타입
+
+import { StringFilter } from "@/lib/generated/prisma/commonInputTypes";
+
 // 테마 그룹별 요청
 export type KiwoomThemeGroup = {
   thema_grp_cd: string;
@@ -177,23 +180,22 @@ export type topChangeRateStock = {
   cnt: string; // 건수
 };
 
+export type topProgramBuysResponse = {
+  kospiProgramBuys: topProgramBuys[];
+  kosdaqProgramBuys: topProgramBuys[];
+  prm_netprps_upper_50: topProgramBuys[];
+};
+
 export type topProgramBuys = {
-  cntr_tm: string; // 체결시간
-  dfrt_trde_sel: string; // 차익 매도
-  dfrt_trde_buy: string; // 차익 매수
-  dfrt_trde_netprps: string; // 차익 순매수
-  ndiffpro_trde_sel: string; // 비차익 매도
-  ndiffpro_trde_buy: string; // 비차익 매수
-  ndiffpro_trde_netprps: string; // 비차익 순매수
-  dfrt_trde_sell_qty: string; // 차익 매도 수량
-  dfrt_trde_buy_qty: string; // 차익 매수 수량
-  dfrt_trde_netprps_qty: string; // 차익 순매수 수량
-  ndiffpro_trde_sell_qty: string; // 비차익 매도 수량
-  ndiffpro_trde_buy_qty: string; // 비차익 매수 수량
-  ndiffpro_trde_netprps_qty: string; // 비차익 순매수 수량
-  all_sel: string; // 전체 매도
-  all_buy: string; // 전체 매수
-  all_netprps: string; // 전체 순매수
-  kospi200: string; // 코스피200
-  basis: string; // 베이시스
+  rank: string; // 순위
+  stk_cd: string; // 종목코드
+  stk_nm: string; // 종목명
+  cur_prc: string; // 현재가
+  flu_sig: string; // 등락기호
+  pred_pre: string; // 전일대비
+  flu_rt: string; // 등락율
+  acc_trde_qty: string; // 누적거래량
+  prm_sell_amt: string; // 프로그램매도금액
+  prm_buy_amt: string; // 프로그램매수금액
+  prm_netprps_amt: string; // 프로그램순매수금액
 };

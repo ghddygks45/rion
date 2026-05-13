@@ -27,3 +27,12 @@ export type PopularStock = {
   price: number;
   changeRate: number;
 };
+
+export type topProgramBuys = {
+  stockCode: string;
+  stockName: string;
+  price: number;
+  changeRate: number;
+  rank: number;
+  programTotal: number;
+};
