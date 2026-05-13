@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { kiwoomFetch } from "@/server/kiwoom/kiwoomFetcher";
-import { topChangeRateStock } from "@/server/kiwoom/types";
+import { TopChangeRateStockResponse } from "@/server/kiwoom/types";
 
 export async function GET() {
-  const limitUp = await kiwoomFetch<topChangeRateStock[]>(
+  const limitUpRes = await kiwoomFetch<TopChangeRateStockResponse>(
     "/api/dostk/stkinfo",
     "ka10017",
     {
@@ -18,7 +18,7 @@ export async function GET() {
     },
   );
 
-  const topRate = await kiwoomFetch<topChangeRateStock[]>(
+  const topRateRes = await kiwoomFetch<TopChangeRateStockResponse>(
     "/api/dostk/stkinfo",
     "ka10017",
     {
@@ -33,5 +33,8 @@ export async function GET() {
     },
   );
 
-  return NextResponse.json({ limitUp, topRate });
+  return NextResponse.json({
+    limitUp: limitUpRes.updown_pric,
+    topRate: topRateRes.updown_pric,
+  });
 }

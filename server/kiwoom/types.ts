@@ -150,6 +150,12 @@ export type PopularStock = {
   stk_cd: string; // 종목코드
 };
 
+export type TopChangeRateStockResponse = {
+  limitUp: topChangeRateStock[]; // 상한가
+  topRate: topChangeRateStock[]; // 등락률 상위
+  updown_pric: topChangeRateStock[];
+};
+
 export type topChangeRateStock = {
   stk_cd: string; // 종목코드
   stk_infr: string; // 종목정보
