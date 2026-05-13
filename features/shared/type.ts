@@ -13,3 +13,10 @@ export type TopChangeRateStock = {
   price: number;
   volume?: number;
 };
+
+export type TopVolumeStock = {
+  stockCode: string;
+  stockName: string;
+  volume: number;
+  rank?: number;
+};

@@ -44,7 +44,7 @@ export type Ka90002Response = {
   return_msg: string;
 };
 
-export type KiwoomTopVolume = {
+export type topVolume = {
   stk_cd: string;
   now_rank: string;
   pred_rank: string;
@@ -60,8 +60,14 @@ export type KiwoomTopVolume = {
   trde_prica: string;
 };
 
+export type topVolumeResponse = {
+  trde_prica_upper: topVolume[];
+  return_code: number;
+  return_msg: string;
+};
+
 export type Ka10032Response = {
-  trde_prica_upper: KiwoomTopVolume[];
+  trde_prica_upper: topVolume[];
   return_code: number;
   return_msg: string;
 };

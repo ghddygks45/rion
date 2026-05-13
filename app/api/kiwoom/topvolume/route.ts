@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { kiwoomFetch } from "@/server/kiwoom/kiwoomFetcher";
-import { Ka10032Response } from "@/server/kiwoom/types";
+import { topVolumeResponse } from "@/server/kiwoom/types";
 
 export async function GET() {
-  const data = await kiwoomFetch<Ka10032Response>(
+  const data = await kiwoomFetch<topVolumeResponse>(
     "/api/dostk/rkinfo",
     "ka10032",
     {
