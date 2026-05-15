@@ -6,11 +6,8 @@ import Badge from "@/components/ui/Badge";
 import Title from "@/components/ui/Title";
 import StockTable from "@/components/ui/StockTable";
 import { Theme } from "../types";
-import { useThemestocks } from "../hooks/useTemeStocks";
+import { useThemeStocks } from "../hooks/useTemeStocks";
 import { useStockTopVolum } from "../hooks/useStockTopVolum";
-import TitleSkeleton from "@/components/skeleton/TitleSkeleton";
-import BadgeSkeleton from "@/components/skeleton/BadgeSkeleton";
-import StockTableSkeleton from "@/components/skeleton/StockTableSkeleton";
 
 export default function ThemeCard({ theme }: { theme: Theme }) {
   const router = useRouter();
@@ -22,7 +19,7 @@ export default function ThemeCard({ theme }: { theme: Theme }) {
         : "neutral";
   const sign = theme.themeChangeRate > 0 ? "+" : "";
 
-  const { data: stocks } = useThemestocks(theme.themeId, theme.themeName);
+  const { data: stocks } = useThemeStocks(theme.themeId, theme.themeName);
   const { data: stockTopVolume } = useStockTopVolum();
 
   const stocksWithVolume =
@@ -55,14 +52,6 @@ export default function ThemeCard({ theme }: { theme: Theme }) {
   console.log(stocksWithThemeVolume);
 
   if (!stocksWithThemeVolume || stocksWithThemeVolume.length === 0) return null;
-  // <Card>
-  //   <div className="flex items-center justify-between mb-2">
-  //     <TitleSkeleton level={2} />
-  //     <BadgeSkeleton />
-  //   </div>
-  //   <div className="h-4 w-3/5 bg-border rounded animate-pulse mb-4" />
-  //   <StockTableSkeleton rows={3} />
-  // </Card>
 
   return (
     <>

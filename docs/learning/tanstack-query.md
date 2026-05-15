@@ -207,6 +207,95 @@ useQuery({ ..., select: (data) => data.kospi.volume })
 
 ---
 
+## useQuery vs useQueries
+
+### useQuery — 요청 1개
+
+```ts
+const { data, isLoading } = useQuery({
+  queryKey: ["themestocks", themeId],
+  queryFn: async () => { ... }
+})
+```
+
+`data` 하나, `isLoading` 하나. 단건 요청.
+
+---
+
+### useQueries — 요청 여러 개를 한번에
+
+```ts
+const results = useQueries({
+  queries: themes.map((theme) => ({
+    queryKey: ["themestocks", theme.themeId],
+    queryFn: async () => { ... }
+  }))
+})
+```
+
+반환값이 **배열**이다. `{ data }` 하나로 안 나온다.
+
+```ts
+results[0].data   // 첫 번째 테마 stocks
+results[1].data   // 두 번째 테마 stocks
+results[2].data   // 세 번째 테마 stocks
+...
+```
+
+`themes[i]`랑 `results[i]`가 같은 인덱스로 매칭된다. map에 넣은 순서 그대로 나오니까.
+
+---
+
+### 왜 useQueries가 필요했냐
+
+훅은 루프나 map 안에서 못 쓴다. (Rules of Hooks)
+
+```ts
+// ❌ 이건 안 됨
+themes.map((theme) => {
+  const { data } = useThemestocks(theme.themeId)  // 에러
+})
+```
+
+그러면 테마가 10개일 때 10개 요청을 어떻게 하냐?  
+처음엔 `useThemestocks`를 ThemeCard 안에 넣고 카드마다 따로 요청했었다.  
+그러니까 카드가 각자 알아서 요청하고, 응답 오는 순서대로 카드가 하나씩 떴던 거다.
+
+근데 이러면 **"전부 완료됐다"를 아는 곳이 없어서** 한번에 뜨게 할 수가 없었다.
+
+---
+
+### useQueries로 해결
+
+`useQueries`는 이 문제를 위해 만들어진 훅이다. 배열로 쿼리 설정을 넘기면 알아서 다 요청해준다.
+
+```ts
+// ThemesPage에서
+const stockResults = useQueries({
+  queries: themes.map((theme) => ({
+    queryKey: ["themestocks", theme.themeId],
+    queryFn: ...
+  }))
+})
+
+// 전부 완료됐는지 한번에 체크 가능
+const allLoaded = stockResults.every((r) => r.data !== undefined)
+```
+
+이제 ThemesPage가 "전부 완료"를 알 수 있으니까:
+- `allLoaded === false` → 스켈레톤 카드 전체 표시
+- `allLoaded === true` → 실제 카드 한번에 표시
+
+---
+
+### queryKey가 같으면 캐시 공유된다
+
+`useQueries` 안에서 쓰는 `queryKey: ["themestocks", themeId]`가  
+기존 `useThemestocks` 훅의 queryKey와 동일하다.  
+그래서 캐시도 공유된다. 같은 데이터를 두 번 요청하는 일이 없다.
+
+---
+
 ## 리렌더되면 useQuery가 또 요청하지 않냐? (무한루프 안 되는 이유)
 
 ### 처음에 헷갈렸던 것

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { KiwoomThemeStockResponse } from "@/server/kiwoom/types";
 import { themeStock } from "../types";
 
-export function useThemestocks(themeId: string, themeName: string) {
+export function useThemeStocks(themeId: string, themeName: string) {
   return useQuery<themeStock[]>({
     queryKey: ["themestocks", themeId],
     queryFn: async () => {
