@@ -207,6 +207,41 @@ useQuery({ ..., select: (data) => data.kospi.volume })
 
 ---
 
+## 리렌더되면 useQuery가 또 요청하지 않냐? (무한루프 안 되는 이유)
+
+### 처음에 헷갈렸던 것
+
+응답이 오면 리렌더가 된다. 리렌더되면 코드가 위에서부터 다시 실행된다.  
+그럼 useThemestocks도 다시 실행될텐데, 그러면 또 요청이 나가고, 또 응답 오고, 또 리렌더되고...  
+무한루프에 빠져야 맞는 거 아닌가?
+
+### 실제로는 이렇다
+
+`useQuery`는 매 렌더마다 fetch를 새로 보내지 않는다.  
+내부적으로 **queryKey로 캐시를 확인**한다.
+
+```
+useThemestocks("theme_001") 첫 실행
+  → TanStack Query: "['themestocks', 'theme_001'] 캐시에 있나?"
+  → 없음 → fetch 보냄
+
+응답 옴 → 캐시에 저장 → 리렌더 발생
+
+useThemestocks("theme_001") 다시 실행 (리렌더로 인해)
+  → TanStack Query: "['themestocks', 'theme_001'] 캐시에 있나?"
+  → 있음 → 캐시 데이터 즉시 반환, fetch 안 보냄 ← 여기서 끊김
+```
+
+그래서 무한루프가 안 된다. queryKey가 캐시의 이름표 역할을 해서 "이미 가져온 데이터"라는 걸 안다.
+
+### useStockTopVolum이 카드 10개에서 불려도 1번만 요청되는 이유
+
+ThemeCard마다 `useStockTopVolum()`을 호출하는데 실제로는 Kiwoom에 1번만 요청이 간다.  
+이유가 바로 이거다. 모든 ThemeCard가 `queryKey: ["topVolume"]`으로 똑같은 키를 쓰니까,  
+첫 번째 카드가 요청하고 캐시에 저장하면 나머지 9개는 캐시에서 꺼내온다.
+
+---
+
 ## 기본 재요청 동작 (refetch 기본 설정)
 
 TanStack Query는 기본적으로 **3가지 상황에서 자동으로 재요청**한다.
