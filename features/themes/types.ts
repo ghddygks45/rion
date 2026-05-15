@@ -1,6 +1,6 @@
 export type themeStock = {
-  themeId: string;
-  themeName: string;
+  themeId?: string;
+  themeName?: string;
   stockCode: string;
   stockName: string;
   price: number;

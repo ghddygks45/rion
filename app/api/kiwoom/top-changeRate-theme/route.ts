@@ -7,7 +7,7 @@ import {
   KiwoomThemeStock,
 } from "@/server/kiwoom/types";
 
-type TodaysThemes = {
+export type TodaysThemes = {
   themeName: string;
   themeId: string;
   themeChangeRate: number;
