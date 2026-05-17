@@ -43,10 +43,10 @@ export default function StockTable({
         <table className="w-full text-sm table-fixed">
           <thead>
             <tr className="text-left">
-              <th className="py-3 pl-4 font-medium text-xs text-text-disabled tracking-wider w-[40%]">
+              <th className="py-3 pl-4 font-medium text-xs text-text-disabled tracking-wider w-[35%]">
                 종목명
               </th>
-              <th className="py-3 font-medium text-xs text-text-disabled tracking-wider text-right w-[22%]">
+              <th className="py-3 font-medium text-xs text-text-disabled tracking-wider text-right w-[25%]">
                 가격
               </th>
               <th className="py-3 font-medium text-xs text-text-disabled tracking-wider text-right w-[18%]">

@@ -1,15 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import { KiwoomDailyTradeDetailResponse } from "@/server/kiwoom/types";
 
 export function useVolume(stockCodes: string[]) {
-  return useQuery<KiwoomDailyTradeDetailResponse>({
-    queryKey: ["volume", stockCodes],
-    enabled: stockCodes.length > 0,
-    queryFn: async () => {
-      const res = await fetch(
-        `/api/kiwoom/stockvolume?stockCodes=${stockCodes.join(",")}`,
-      );
-      return res.json();
-    },
+  const uniqueCodes = [...new Set(stockCodes)];
+  return useQueries({
+    queries: uniqueCodes.map((stockCode) => ({
+      queryKey: ["volume", stockCode],
+      queryFn: async (): Promise<{ stockCode: string; volume: number }> => {
+        const res = await fetch(
+          `/api/kiwoom/stock-volume?stockCode=${stockCode}`,
+        );
+        return res.json();
+      },
+    })),
   });
 }
