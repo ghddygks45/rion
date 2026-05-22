@@ -7,6 +7,9 @@ export type themeStock = {
   changeRate: number;
   volume?: number;
   themeVolume?: number;
+  institution?: number;
+  foreign?: number;
+  program?: number;
 };
 
 export type Theme = {

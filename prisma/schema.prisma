@@ -33,3 +33,15 @@ model User {
   email String  @unique                       // 이메일. 중복 불가
   name  String?                               // 이름. ?는 없어도 되는 선택값이라는 뜻
 }
+
+
+model TodaysTheme {
+  id          Int   @id @default(autoincrement())
+  date        String
+  type        String
+  data        Json
+  createdAt   DateTime  @default(now())
+  
+  @@unique([date, type])
+}
+

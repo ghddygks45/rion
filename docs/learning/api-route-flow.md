@@ -100,3 +100,43 @@ route.ts
 - 기존: `fetch('https://백엔드서버.com/articles')` → 남이 만든 서버 URL 사용
 - 지금: `fetch('/api/kiwoom/themes')` → 우리가 직접 만든 서버 URL 사용
 - 브라우저 코드(useQuery)는 완전히 동일한 방식. 다른 건 그 URL의 주인이 누구냐뿐
+
+---
+
+## 브라우저에서 DB를 직접 쓸 수 없는 이유
+
+Prisma는 Node.js(서버) 환경에서만 동작한다. 브라우저에서 `prisma.todaysTheme.upsert()`를 직접 부르는 건 불가능하다.
+
+그래서 항상 이 구조를 거쳐야 한다:
+
+```
+브라우저(클라이언트)
+  → fetch("/api/themes/save", { method: "POST", body: 데이터 })
+
+서버(route.ts)
+  → request.json()으로 데이터 수신
+  → prisma.todaysTheme.upsert()로 DB에 저장
+
+DB (Supabase PostgreSQL)
+  → 데이터 저장 완료
+```
+
+브라우저가 직접 DB에 쓰는 게 아니라, API route가 중간 다리 역할을 한다.
+
+**조회도 마찬가지:**
+
+```
+브라우저
+  → fetch("/api/themes/today")  (GET 요청)
+
+서버(route.ts)
+  → prisma.todaysTheme.findUnique()로 DB에서 조회
+  → NextResponse.json(data)로 반환
+
+브라우저
+  → 받은 데이터로 화면 렌더링
+```
+
+이 구조 덕분에:
+1. DB 접근 권한이 서버에만 있다 → 보안
+2. 브라우저는 API URL만 알면 된다 → DB 구조가 외부에 노출되지 않음

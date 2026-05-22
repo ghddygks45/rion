@@ -248,3 +248,108 @@ postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.co
 ```
 
 username 형식이 다르다: 직접 연결은 `postgres`, 풀러는 `postgres.[PROJECT-REF]`
+
+---
+
+## @@unique — 여러 컬럼 조합에 거는 중복 방지
+
+`@unique`는 컬럼 하나에 중복을 막는다.
+`@@unique`(더블 골뱅이)는 **여러 컬럼의 조합**이 중복될 때 막는다.
+
+```prisma
+model TodaysTheme {
+  id        Int      @id @default(autoincrement())
+  date      String   // 예: "20260522"
+  type      String   // 예: "topVolumeThemes"
+  data      Json
+
+  @@unique([date, type])
+}
+```
+
+위 예시에서 `date`만으로는 중복 허용, `type`만으로도 중복 허용.
+하지만 `date + type` 조합이 같으면 저장이 막힌다.
+
+| date | type | 저장 가능? |
+|------|------|----------|
+| "20260522" | "topVolumeThemes" | ✅ |
+| "20260522" | "topChangeRateThemes" | ✅ (type이 다름) |
+| "20260523" | "topVolumeThemes" | ✅ (date가 다름) |
+| "20260522" | "topVolumeThemes" | ❌ (조합 중복) |
+
+---
+
+## prisma migrate dev vs prisma generate
+
+두 명령어가 하는 일이 다르다.
+
+```bash
+npx prisma migrate dev --name add_todays_theme
+```
+→ **DB에 실제 테이블을 생성/변경**한다. SQL을 실행하는 것.
+→ `prisma generate`도 내부적으로 자동 실행된다.
+
+```bash
+npx prisma generate
+```
+→ **TypeScript 클라이언트 코드만 재생성**한다. DB는 건드리지 않는다.
+→ `prisma.todaysTheme.upsert()` 같은 코드가 타입 에러 없이 작동하려면 generate가 먼저 되어 있어야 한다.
+
+스키마를 바꿀 때마다 이 두 가지 세트:
+1. `migrate dev` → DB 반영
+2. `generate` → TypeScript 반영 (`migrate dev`가 자동으로 해주므로 보통 따로 안 해도 됨)
+
+generate를 따로 쓰는 경우: migrate 없이 타입만 빠르게 갱신하고 싶을 때.
+
+---
+
+## upsert — "있으면 수정, 없으면 생성"
+
+`upsert` = update + insert 합친 말.
+
+```ts
+await prisma.todaysTheme.upsert({
+  where: { date_type: { date: "20260522", type: "topVolumeThemes" } },
+  update: { data: 새데이터 },
+  create: { date: "20260522", type: "topVolumeThemes", data: 새데이터 },
+});
+```
+
+- `where` — 이 조건에 맞는 행이 있는지 찾는다 (@@unique 컬럼 조합으로 찾음)
+- `update` — 행이 **있으면** 이 데이터로 덮어쓴다
+- `create` — 행이 **없으면** 새로 만든다
+
+`update`만 있으면 행이 없을 때 에러가 나고,
+`create`만 있으면 행이 이미 있을 때 에러가 난다.
+두 개를 세트로 써야 어느 상황이든 안전하다.
+
+---
+
+## @@unique + upsert 조합으로 "항상 최신 1행 유지하기"
+
+날짜별로 스냅샷 데이터를 저장할 때 자주 쓰는 패턴이다.
+
+`@@unique([date, type])`이 있으면, 같은 `date + type` 조합으로 `upsert`를 몇 번 해도 항상 1행만 유지된다.
+
+```
+10시에 저장: date="20260522", type="topVolumeThemes" → 행 생성
+11시에 저장: date="20260522", type="topVolumeThemes" → 기존 행 덮어씀 (여전히 1행)
+12시에 저장: date="20260522", type="topVolumeThemes" → 또 덮어씀 (여전히 1행)
+```
+
+날짜가 바뀌면(`20260523`) 새 행이 생긴다. 이렇게 날짜별로 데이터가 쌓인다.
+
+---
+
+## 스냅샷 방식 DB 저장 전략
+
+실시간 API를 매번 호출하면 두 가지 문제가 있다:
+1. 느리다 — API 응답 기다리는 동안 사용자가 로딩을 봐야 한다
+2. API 호출 수 제한이 있다 — 키움 같은 유료 API는 초당/일당 호출 횟수 제한이 있다
+
+**스냅샷 방식:**
+1. 처음 방문 시 → API 호출 → 데이터 처리 → DB에 저장 (스냅샷 찍기)
+2. 이후 방문 시 → DB에서 즉시 가져옴 (API 호출 없음, 빠름)
+3. 일정 시간 후 → 다시 API 호출해서 DB 갱신 (`staleTime`으로 제어)
+
+DB가 캐시 역할을 한다. API는 처음 또는 데이터가 오래됐을 때만 호출한다.

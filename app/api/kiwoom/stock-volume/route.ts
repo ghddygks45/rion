@@ -19,6 +19,6 @@ export async function GET(request: Request) {
 
   return NextResponse.json({
     stockCode,
-    volume: data.daly_trde_dtl[0]?.trde_prica ?? 0,
+    volume: data.daly_trde_dtl?.[0]?.trde_prica ?? 0,
   });
 }
