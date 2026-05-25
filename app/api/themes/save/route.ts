@@ -33,5 +33,5 @@ export async function POST(request: Request) {
       },
     }),
   ]);
-  return NextResponse.json({ topVolumeThemes, topChangeRateThemes });
+  return NextResponse.json({ topVolumeThemes });
 }

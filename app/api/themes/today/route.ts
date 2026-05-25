@@ -16,5 +16,6 @@ export async function GET() {
   return NextResponse.json({
     topVolumeThemes: topVolumeThemes?.data ?? null,
     topChangeRateThemes: topChangeRateThemes?.data ?? null,
+    createdAt: topVolumeThemes?.createdAt ?? null,
   });
 }

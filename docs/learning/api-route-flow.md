@@ -140,3 +140,28 @@ DB (Supabase PostgreSQL)
 이 구조 덕분에:
 1. DB 접근 권한이 서버에만 있다 → 보안
 2. 브라우저는 API URL만 알면 된다 → DB 구조가 외부에 노출되지 않음
+
+---
+
+## API 응답에서 undefined 대신 null을 써야 하는 이유
+
+DB에서 데이터를 못 찾으면 Prisma는 `null`을 반환한다. 그런데 `null?.data`처럼 접근하면 `undefined`가 된다. 이걸 그냥 API 응답으로 내보내면 문제가 생긴다.
+
+JavaScript에서 객체를 JSON으로 변환할 때(`JSON.stringify`) `undefined` 값은 **키 자체가 사라진다**:
+
+```js
+JSON.stringify({ a: undefined })  // → "{}"         ← a 키가 없어짐
+JSON.stringify({ a: null })       // → '{"a":null}'  ← a 키가 살아있음
+```
+
+API 응답으로 `{ topVolumeThemes: undefined }`를 보내면 브라우저가 받을 때 `topVolumeThemes` 키가 아예 없는 상태로 온다. 브라우저 코드에서 `data.topVolumeThemes`를 읽으면 `undefined`가 나오는데, 이게 "DB에 데이터가 없어서 null이야"인지 "서버가 이 키를 안 보낸 거야"인지 구분이 안 된다.
+
+그래서 `?? null`을 써서 명시적으로 null로 변환해준다:
+
+```ts
+return NextResponse.json({
+  topVolumeThemes: volumeSnap?.data ?? null,  // undefined → null로 변환
+})
+```
+
+브라우저에서 `null`을 받으면 "이 키는 존재하는데 값이 없다 = DB에 데이터가 없다"고 명확히 알 수 있다.

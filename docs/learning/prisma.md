@@ -169,7 +169,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 |---|---|
 | `@id` | 기본키(Primary Key). 테이블에서 각 행을 유일하게 식별하는 값 |
 | `@default(autoincrement())` | 새 데이터 삽입 시 자동으로 1, 2, 3... 증가 |
-| `@default(now())` | 삽입 시각을 자동으로 기록 |
+| `@default(now())` | 삽입 시각을 자동으로 기록. **PostgreSQL이 직접 넣어줌** (Prisma가 아님) |
 | `@unique` | 이 필드에 중복값 저장 불가. DB 레벨에서 강제 |
 
 ### `@unique` 활용 예시
@@ -248,6 +248,33 @@ postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.co
 ```
 
 username 형식이 다르다: 직접 연결은 `postgres`, 풀러는 `postgres.[PROJECT-REF]`
+
+---
+
+## @default(now()) — 누가 현재 시각을 넣어주나
+
+```prisma
+createdAt  DateTime  @default(now())
+```
+
+이 설정이 있으면 데이터를 저장할 때 `createdAt`을 직접 안 써도 자동으로 현재 시각이 들어간다. 그런데 이걸 넣어주는 주체가 **Prisma가 아니라 PostgreSQL(DB 자체)** 이다.
+
+Prisma가 `INSERT INTO` 쿼리를 날릴 때 `createdAt`을 명시하지 않으면, PostgreSQL이 스스로 "지금 몇 시지? 이 컬럼 기본값 채워야겠다"하고 현재 시각을 넣는다. 이게 DB 레벨의 `DEFAULT` 기능이다.
+
+그래서 Prisma 코드에서 `createdAt`을 쓸 필요가 없다:
+
+```ts
+// createdAt 없이 저장해도 DB가 알아서 채워줌
+prisma.todaysTheme.create({
+  data: {
+    date: "20260522",
+    type: "topVolumeThemes",
+    data: [...],
+  }
+})
+```
+
+`@default(autoincrement())`도 마찬가지다. id를 직접 안 넣어도 PostgreSQL이 1, 2, 3... 순서로 자동으로 채워준다.
 
 ---
 
