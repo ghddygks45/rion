@@ -9,12 +9,12 @@ export async function GET() {
     "/api/dostk/stkinfo",
     "ka10015",
     {
-      stk_cd: "011930_AL",
+      stk_cd: "005930_AL",
       strt_dt: today,
     },
   );
   console.log("============" + detail.daly_trde_dtl[0] + "============");
   console.log(JSON.stringify(detail.daly_trde_dtl[0]));
 
-  return NextResponse.json(detail.daly_trde_dtl[0].trde_prica);
+  return NextResponse.json(detail.daly_trde_dtl[0]);
 }

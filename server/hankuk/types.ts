@@ -104,3 +104,30 @@ export type GlobalMarketResponse = {
   prev_diff_price: string; // 전일대비가격
   prev_diff_rate: string; // 전일대비율
 };
+
+// 주식현재가 투자자[v1_국내주식-012](FHKST01010900)
+export type InvestorFlowItem = {
+  output: string[];
+  stck_bsop_date: string; // 주식 영업 일자
+  stck_clpr: string; // 주식 종가
+  prdy_vrss: string; // 전일 대비
+  prdy_vrss_sign: string; // 전일 대비 부호
+  prsn_ntby_qty: string; // 개인 순매수 수량
+  frgn_ntby_qty: string; // 외국인 순매수 수량
+  orgn_ntby_qty: string; // 기관계 순매수 수량
+  prsn_ntby_tr_pbmn: string; // 개인 순매수 거래 대금
+  frgn_ntby_tr_pbmn: string; // 외국인 순매수 거래 대금
+  orgn_ntby_tr_pbmn: string; // 기관계 순매수 거래 대금
+  prsn_shnu_vol: string; // 개인 매수 거래량
+  frgn_shnu_vol: string; // 외국인 매수 거래량
+  orgn_shnu_vol: string; // 기관계 매수 거래량
+  prsn_shnu_tr_pbmn: string; // 개인 매수 거래 대금
+  frgn_shnu_tr_pbmn: string; // 외국인 매수 거래 대금
+  orgn_shnu_tr_pbmn: string; // 기관계 매수 거래 대금
+  prsn_seln_vol: string; // 개인 매도 거래량
+  frgn_seln_vol: string; // 외국인 매도 거래량
+  orgn_seln_vol: string; // 기관계 매도 거래량
+  prsn_seln_tr_pbmn: string; // 개인 매도 거래 대금
+  frgn_seln_tr_pbmn: string; // 외국인 매도 거래 대금
+  orgn_seln_tr_pbmn: string; // 기관계 매도 거래 대금
+};

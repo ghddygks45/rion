@@ -17,6 +17,8 @@ import { useIsFetching, useQueryClient } from "@tanstack/react-query";
 import { useTodayThemesFromDB } from "@/features/themes/hooks/useTodayThemesFromDB";
 import Button from "@/components/ui/Button";
 import Tab from "@/components/ui/Tab";
+import { useStockInvestorFlow } from "@/features/themes/hooks/useStockInvestorFlow";
+import { useStockProgramFlow } from "@/features/themes/hooks/useStockProgramFlow";
 
 const STALE_MS = 1 * 60 * 1000;
 
@@ -114,6 +116,14 @@ export default function ThemesPage() {
     console.log("재요청 되었습니다.");
     return () => clearInterval(id);
   }, [queryClient, dbDataChecker]);
+
+  // other: 수급 불러오기(기관, 외국인)
+  const investorFlowResults = useStockInvestorFlow(stockCodes);
+  // other: 수급 불러오기(프로그램)
+  const programFlowResults = useStockProgramFlow(stockCodes);
+
+  // console.log("기관, 외국인", investorFlowResults);
+  console.log("프로그램", JSON.parse(JSON.stringify(programFlowResults)));
 
   // 6. 로딩 스켈레톤: db없을 때,
   if (!dbThemeData?.topVolumeThemes)

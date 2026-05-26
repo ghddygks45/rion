@@ -189,3 +189,29 @@ export type topProgramBuys = {
   prm_buy_amt: string; // 프로그램매수금액
   prm_netprps_amt: string; // 프로그램순매수금액
 };
+
+// 종목일별프로그램매매추이요청(ka90013)
+export type ProgramFlowItem = {
+  dt: string; // 일자 (YYYYMMDD)
+  cur_prc: string; // 현재가 (원)
+  pre_sig: string; // 대비기호
+  pred_pre: string; // 전일대비 (원)
+  flu_rt: string; // 등락율 (%)
+  trde_qty: string; // 거래량 (1주 단위)
+  prm_sell_amt: string; // 프로그램 매도금액 (백만원)
+  prm_buy_amt: string; // 프로그램 매수금액 (백만원)
+  prm_netprps_amt: string; // 프로그램 순매수금액 (백만원)
+  prm_netprps_amt_irds: string; // 프로그램 순매수금액 증감 (백만원)
+  prm_sell_qty: string; // 프로그램 매도수량 (1주)
+  prm_buy_qty: string; // 프로그램 매수수량 (1주)
+  prm_netprps_qty: string; // 프로그램 순매수수량 (1주)
+  prm_netprps_qty_irds: string; // 프로그램 순매수수량 증감 (1주)
+  base_pric_tm: string; // 기준가 시간 (HHmmss)
+  dbrt_trde_rpy_sum: string; // 대차거래 상환주수합
+  remn_rcvord_sum: string; // 잔고수주합
+  stex_tp: string; // 거래소구분 (KRX / NXT / 통합)
+};
+
+export type ProgramFlowResponse = {
+  stk_daly_prm_trde_trnsn: ProgramFlowItem[];
+};
