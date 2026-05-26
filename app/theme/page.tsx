@@ -10,26 +10,21 @@ import { useStockTopVolum } from "@/features/themes/hooks/useStockTopVolum";
 import { useAllThemeStocks } from "@/features/themes/hooks/useAllThemeStocks";
 import { useThemes } from "@/features/themes/hooks/useThemes";
 import { useVolume } from "@/features/stock-detail/hooks/useVolume";
-import { themeStock } from "@/features/themes/types";
 import { useTopThemeStocks } from "@/features/themes/hooks/useTopThemeStocks";
 
 import { useState, useEffect } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useIsFetching, useQueryClient } from "@tanstack/react-query";
 import { useTodayThemesFromDB } from "@/features/themes/hooks/useTodayThemesFromDB";
 import Button from "@/components/ui/Button";
 import Tab from "@/components/ui/Tab";
 
 const STALE_MS = 1 * 60 * 1000;
 
-function isStale(createdAt: string | null) {
-  if (!createdAt) return true;
-  return Date.now() - new Date(createdAt).getTime() > STALE_MS;
-}
-
 export default function ThemesPage() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<string>("volume");
-  const [refreshButton, setRefreshButton] = useState(false);
+
+  const isFetching = useIsFetching(); // 현재 fetching 중인 쿼리 수
 
   // 1. DB에 데이터 확인
   const { data: dbThemeData, isLoading: dbThemeLoading } =
@@ -103,7 +98,6 @@ export default function ThemesPage() {
       // body: JSON.stringify({ topVolumeThemes }),
     }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["themes-db"] });
-      setRefreshButton(false);
     });
     console.log("db에 저장되었습니다.");
   }, [allLoaded, themesUpdatedAt]);
@@ -151,17 +145,22 @@ export default function ThemesPage() {
   // 7. 화면표시
   return (
     <main className="max-w-7xl mx-auto px-6 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <Title level={1}>오늘의 테마</Title>
-        <Button onClick={() => setRefreshButton(true)}>새로고침</Button>
-        <div className="flex gap-2 mb-6">
-          {/* <Button onClick={() => setActiveTab("volume")}>거래대금 상위</Button>
+      <div className="flex items-end justify-between mb-6">
+        <div className="flex gap-2 items-end">
+          <Title level={1}>오늘의 테마</Title>
           <Button
-            variant="secondary"
-            onClick={() => setActiveTab("changeRate")}
+            disabled={isFetching > 0}
+            size="sm"
+            onClick={() => {
+              queryClient.invalidateQueries({ queryKey: ["themes"] });
+              queryClient.invalidateQueries({ queryKey: ["themestocks"] });
+              queryClient.invalidateQueries({ queryKey: ["topVolume"] });
+            }}
           >
-            테마 상승률 상위
-          </Button> */}
+            {isFetching ? "최신데이터를 불러오고 있습니다..." : "새로고침"}
+          </Button>
+        </div>
+        <div className="flex gap-2">
           <Tab
             tabs={[
               { key: "volume", label: "거래대금 상위" },
