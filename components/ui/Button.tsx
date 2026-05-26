@@ -1,23 +1,24 @@
 type ButtonProps = {
-  variant?: 'primary' | 'secondary'
-  children: React.ReactNode
-  onClick?: () => void
-  disabled?: boolean
-  className?: string
-}
+  variant?: "primary" | "secondary";
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  className?: string;
+};
 
 export default function Button({
-  variant = 'primary',
+  variant = "primary",
   children,
   onClick,
   disabled,
-  className = '',
+  className = "",
 }: ButtonProps) {
-  const base = 'px-4 py-2 rounded-lg text-sm font-medium transition-opacity disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed'
+  const base =
+    "px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed";
   const variants = {
-    primary: 'bg-accent text-white',
-    secondary: 'bg-surface border border-border text-text',
-  }
+    primary: "bg-accent text-white hover:opacity-90",
+    secondary: "bg-surface border border-border text-text hover:bg-border",
+  };
 
   return (
     <button
@@ -27,5 +28,5 @@ export default function Button({
     >
       {children}
     </button>
-  )
+  );
 }
