@@ -19,12 +19,15 @@ import Button from "@/components/ui/Button";
 import Tab from "@/components/ui/Tab";
 import { useStockInvestorFlow } from "@/features/themes/hooks/useStockInvestorFlow";
 import { useStockProgramFlow } from "@/features/themes/hooks/useStockProgramFlow";
+import Toggle from "@/components/ui/Toggle";
 
 const STALE_MS = 1 * 60 * 1000;
 
 export default function ThemesPage() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<string>("volume");
+
+  const [activeView, setActiveView] = useState<string>("price");
 
   const isFetching = useIsFetching(); // 현재 fetching 중인 쿼리 수
 
@@ -178,6 +181,14 @@ export default function ThemesPage() {
             ]}
             activeKey={activeTab}
             onChange={(tab) => setActiveTab(tab)}
+          />
+        </div>
+        <div className="flex gap-2">
+          <Toggle
+            checked={activeView === "price"}
+            onChange={(toggle) => setActiveView(toggle ? "price" : "supply")}
+            labelLeft="현재가"
+            labelRight="수급"
           />
         </div>
       </div>
