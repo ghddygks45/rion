@@ -1,3 +1,4 @@
+import { InvestorFlowItem } from "@/server/hankuk/types";
 import { useQueries } from "@tanstack/react-query";
 
 export function useStockInvestorFlow(stockCodes: string[]) {
@@ -5,7 +6,7 @@ export function useStockInvestorFlow(stockCodes: string[]) {
   return useQueries({
     queries: uniqueCodes.map((stockCode) => ({
       queryKey: ["stockInvestorFlow", stockCode],
-      queryFn: async (): Promise<{ stockCode: string }> => {
+      queryFn: async (): Promise<InvestorFlowItem> => {
         const res = await fetch(
           `/api/hankuk/investor-flow?stockCode=${stockCode}`,
         );

@@ -1,3 +1,4 @@
+import { ProgramFlowItem } from "@/server/kiwoom/types";
 import { useQueries } from "@tanstack/react-query";
 
 export function useStockProgramFlow(stockCodes: string[]) {
@@ -5,7 +6,7 @@ export function useStockProgramFlow(stockCodes: string[]) {
   return useQueries({
     queries: uniqueCodes.map((stockCode) => ({
       queryKey: ["stockProgramFlow", stockCode],
-      queryFn: async (): Promise<{ stockCode: string }> => {
+      queryFn: async (): Promise<ProgramFlowItem> => {
         const res = await fetch(
           `/api/kiwoom/stock-program-flow?stockCode=${stockCode}`,
         );

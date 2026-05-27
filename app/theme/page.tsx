@@ -20,6 +20,7 @@ import Tab from "@/components/ui/Tab";
 import { useStockInvestorFlow } from "@/features/themes/hooks/useStockInvestorFlow";
 import { useStockProgramFlow } from "@/features/themes/hooks/useStockProgramFlow";
 import Toggle from "@/components/ui/Toggle";
+import { codeFrameColumns } from "next/dist/build/swc/generated-native";
 
 const STALE_MS = 1 * 60 * 1000;
 
@@ -90,8 +91,6 @@ export default function ThemesPage() {
     };
   });
 
-  console.log(topChangeRateThemes);
-
   // 5. 가공된 데이터 저장
   useEffect(() => {
     if (!allLoaded) return;
@@ -120,13 +119,59 @@ export default function ThemesPage() {
     return () => clearInterval(id);
   }, [queryClient, dbDataChecker]);
 
-  // other: 수급 불러오기(기관, 외국인)
-  const investorFlowResults = useStockInvestorFlow(stockCodes);
-  // other: 수급 불러오기(프로그램)
-  const programFlowResults = useStockProgramFlow(stockCodes);
+  //************수급 불러오기***************************************
 
-  // console.log("기관, 외국인", investorFlowResults);
-  console.log("프로그램", JSON.parse(JSON.stringify(programFlowResults)));
+  // 거래대금 상위에서 가져온 stockCodes
+  const topVolumeStockCodes = (topVolumeThemes ?? [])
+    .flatMap((theme) => theme.stocks)
+    .map((stock) => stock.stockCode);
+
+  // 테마상승률 상위에서 가져온 stockCodes
+  const topChangeRateStockCodes = topThemeStocks
+    .flatMap((result) => result.data ?? [])
+    .map((stock) => stock.stockCode);
+
+  // 중복을 제거한 모든 stockCodes
+  const allStockCodes = [
+    ...new Set([...topVolumeStockCodes, ...topChangeRateStockCodes]),
+  ];
+
+  // other: 수급 불러오기(기관, 외국인)
+  const investorFlowResults = useStockInvestorFlow(allStockCodes);
+  // other: 수급 불러오기(프로그램)
+  const programFlowResults = useStockProgramFlow(allStockCodes);
+
+  const investorMap = new Map(
+    allStockCodes.map((stockCode, i) => [
+      stockCode,
+      investorFlowResults[i]?.data,
+    ]),
+  );
+  const programMap = new Map(
+    allStockCodes.map((code, i) => [code, programFlowResults[i]?.data]),
+  );
+
+  // topVolmeThmes에 매핑
+  const topVolumeThemesWithSupply = topVolumeThemes?.map((theme) => ({
+    ...theme,
+    stocks: theme.stocks.map((stock) => ({
+      ...stock,
+      institution: investorMap.get(stock.stockCode)?.orgn_ntby_tr_pbmn ?? "0",
+      foreign: investorMap.get(stock.stockCode)?.frgn_ntby_tr_pbmn ?? "0",
+      program: programMap.get(stock.stockCode)?.prm_netprps_amt ?? "0",
+    })),
+  }));
+
+  // topChangeRateThemes에 매핑
+  const topChangeRateThemesWithSupply = topChangeRateThemes?.map((theme) => ({
+    ...theme,
+    stocks: theme.stocks.map((stock) => ({
+      ...stock,
+      institution: investorMap.get(stock.stockCode)?.orgn_ntby_tr_pbmn ?? "0",
+      foreign: investorMap.get(stock.stockCode)?.frgn_ntby_tr_pbmn ?? "0",
+      program: programMap.get(stock.stockCode)?.prm_netprps_amt ?? "0",
+    })),
+  }));
 
   // 6. 로딩 스켈레톤: db없을 때,
   if (!dbThemeData?.topVolumeThemes)
