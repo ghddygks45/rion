@@ -28,7 +28,7 @@ export default function ThemesPage() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<string>("volume");
 
-  const [activeView, setActiveView] = useState<string>("price");
+  const [activeView, setActiveView] = useState<"price" | "supply">("price");
 
   const isFetching = useIsFetching(); // 현재 fetching 중인 쿼리 수
 
@@ -156,9 +156,11 @@ export default function ThemesPage() {
     ...theme,
     stocks: theme.stocks.map((stock) => ({
       ...stock,
-      institution: investorMap.get(stock.stockCode)?.orgn_ntby_tr_pbmn ?? "0",
-      foreign: investorMap.get(stock.stockCode)?.frgn_ntby_tr_pbmn ?? "0",
-      program: programMap.get(stock.stockCode)?.prm_netprps_amt ?? "0",
+      institution: Number(
+        investorMap.get(stock.stockCode)?.orgn_ntby_tr_pbmn ?? 0,
+      ),
+      foreign: Number(investorMap.get(stock.stockCode)?.frgn_ntby_tr_pbmn ?? 0),
+      program: Number(programMap.get(stock.stockCode)?.prm_netprps_amt ?? 0),
     })),
   }));
 
@@ -167,9 +169,11 @@ export default function ThemesPage() {
     ...theme,
     stocks: theme.stocks.map((stock) => ({
       ...stock,
-      institution: investorMap.get(stock.stockCode)?.orgn_ntby_tr_pbmn ?? "0",
-      foreign: investorMap.get(stock.stockCode)?.frgn_ntby_tr_pbmn ?? "0",
-      program: programMap.get(stock.stockCode)?.prm_netprps_amt ?? "0",
+      institution: Number(
+        investorMap.get(stock.stockCode)?.orgn_ntby_tr_pbmn ?? 0,
+      ),
+      foreign: Number(investorMap.get(stock.stockCode)?.frgn_ntby_tr_pbmn ?? 0),
+      program: Number(programMap.get(stock.stockCode)?.prm_netprps_amt ?? 0),
     })),
   }));
 
@@ -195,10 +199,17 @@ export default function ThemesPage() {
       </main>
     );
 
-  const themesToShow =
-    activeTab === "volume"
-      ? dbThemeData?.topVolumeThemes
+  const volumeThemes =
+    activeView === "supply"
+      ? topVolumeThemesWithSupply // 나중에 db데이터로 고침.
+      : dbThemeData?.topVolumeThemes;
+
+  const changeRateThemes =
+    activeView === "supply"
+      ? topChangeRateThemesWithSupply // 나중에 db데이터로 고침.
       : dbThemeData?.topChangeRateThemes;
+
+  const themesToShow = activeTab === "volume" ? volumeThemes : changeRateThemes;
 
   // 7. 화면표시
   return (
@@ -230,8 +241,8 @@ export default function ThemesPage() {
         </div>
         <div className="flex gap-2">
           <Toggle
-            checked={activeView === "price"}
-            onChange={(toggle) => setActiveView(toggle ? "price" : "supply")}
+            checked={activeView === "supply"}
+            onChange={(toggle) => setActiveView(toggle ? "supply" : "price")}
             labelLeft="현재가"
             labelRight="수급"
           />
@@ -239,7 +250,7 @@ export default function ThemesPage() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {themesToShow?.map((theme) => (
-          <ThemeCard key={theme.themeId} theme={theme} />
+          <ThemeCard key={theme.themeId} theme={theme} view={activeView} />
         ))}
       </div>
     </main>

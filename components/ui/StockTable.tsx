@@ -22,12 +22,14 @@ type StockTableProps = {
   stocks: themeStock[];
   title?: string;
   className?: string;
+  view?: "price" | "supply";
 };
 
 export default function StockTable({
   stocks,
   title,
   className,
+  view = "price",
 }: StockTableProps) {
   return (
     <div
@@ -47,13 +49,13 @@ export default function StockTable({
                 종목명
               </th>
               <th className="py-3 font-medium text-xs text-text-disabled tracking-wider text-right w-[25%]">
-                가격
+                {view === "price" ? "가격" : "외국인"}
               </th>
               <th className="py-3 font-medium text-xs text-text-disabled tracking-wider text-right w-[18%]">
-                등락률
+                {view === "price" ? "등락률" : "기관"}
               </th>
               <th className="py-3 pr-4 font-medium text-xs text-text-disabled tracking-wider text-right w-[20%]">
-                거래대금
+                {view === "price" ? "거래대금" : "프로그램"}
               </th>
             </tr>
           </thead>
@@ -78,17 +80,23 @@ export default function StockTable({
                     {stock.stockName}
                   </td>
                   <td className="py-3 text-right text-text tabular-nums">
-                    {formatPrice(stock.price)}
+                    {view === "price"
+                      ? formatPrice(stock.price)
+                      : (stock.foreign ?? 0)}
                   </td>
                   <td className="py-3 text-right">
                     <Badge variant={variant}>
-                      {formatChangeRate(stock.changeRate)}
+                      {view === "price"
+                        ? formatChangeRate(stock.changeRate)
+                        : (stock.institution ?? 0)}
                     </Badge>
                   </td>
                   <td className="py-3 pr-4 text-right text-text-secondary tabular-nums">
-                    {stock.volume !== undefined
-                      ? formatVolume(stock.volume)
-                      : "-"}
+                    {view === "price"
+                      ? stock.volume !== undefined
+                        ? formatVolume(stock.volume)
+                        : "-"
+                      : (stock.program ?? 0)}
                   </td>
                 </tr>
               );

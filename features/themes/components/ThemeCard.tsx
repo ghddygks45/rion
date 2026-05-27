@@ -7,7 +7,13 @@ import Title from "@/components/ui/Title";
 import StockTable from "@/components/ui/StockTable";
 import { ThemeWithStocks } from "../types";
 
-export default function ThemeCard({ theme }: { theme: ThemeWithStocks }) {
+export default function ThemeCard({
+  theme,
+  view = "price",
+}: {
+  theme: ThemeWithStocks;
+  view?: "price" | "supply";
+}) {
   const router = useRouter();
   const variant =
     theme.themeChangeRate > 0
@@ -36,7 +42,7 @@ export default function ThemeCard({ theme }: { theme: ThemeWithStocks }) {
           </p>
         </div>
 
-        <StockTable stocks={theme.stocks} />
+        <StockTable stocks={theme.stocks} view={view} />
       </Card>
     </>
   );
