@@ -15,8 +15,8 @@ export async function GET(request: Request) {
         FID_INPUT_ISCD: stockCode,
       },
     );
-    return NextResponse.json(data.output[0]);
-  } catch (error) {
-    return NextResponse.json(error);
+    return NextResponse.json(data.output[0] ?? "실패");
+  } catch {
+    return NextResponse.json("실패");
   }
 }

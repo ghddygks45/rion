@@ -25,6 +25,13 @@ export type ThemeWithStocks = {
   stocks: themeStock[];
 };
 
+export type ThemeWithSupply = {
+  themeId: string;
+  themeName: string;
+  themeChangeRate: number;
+  stocks: themeStock[];
+};
+
 export type stockTopVolume = {
   stockCode: string;
   volume: string;

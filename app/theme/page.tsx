@@ -20,7 +20,7 @@ import Tab from "@/components/ui/Tab";
 import { useStockInvestorFlow } from "@/features/themes/hooks/useStockInvestorFlow";
 import { useStockProgramFlow } from "@/features/themes/hooks/useStockProgramFlow";
 import Toggle from "@/components/ui/Toggle";
-import { codeFrameColumns } from "next/dist/build/swc/generated-native";
+import { useTodaySupplyFromDB } from "@/features/themes/hooks/useTodaySupplyFromDB";
 
 const STALE_MS = 1 * 60 * 1000;
 
@@ -32,11 +32,15 @@ export default function ThemesPage() {
 
   const isFetching = useIsFetching(); // 현재 fetching 중인 쿼리 수
 
-  // 1. DB에 데이터 확인
+  // 1. DB에 데이터 확인(상승률)
   const { data: dbThemeData, isLoading: dbThemeLoading } =
     useTodayThemesFromDB();
 
   const dbDataChecker = dbThemeData?.topVolumeThemes != null;
+
+  // 1. DB에 데이터 확인(수급)
+  const { data: dbSupplyData, isLoading: dbSupplyLoading } =
+    useTodaySupplyFromDB();
 
   // 2. 외부 api에 각 데이터 요청
   const { data: themes } = useThemes();
@@ -69,24 +73,37 @@ export default function ThemesPage() {
     })
     .filter((theme) => theme.stocks.length > 0);
 
-  // 4. 로딩
-  const allLoaded =
-    allStocks.every((stocks) => stocks.data !== undefined) && !!topVolume;
-
   const stockCodes = topThemeStocks
     .flatMap((result) => result.data ?? [])
     .map((stock) => stock.stockCode);
 
   const volume = useVolume(stockCodes);
 
+  const volumeMap = new Map(
+    stockCodes.map((code, i) => [code, volume[i]?.data]),
+  );
+
+  // 4. 로딩
+  const allLoaded =
+    allStocks.every((stocks) => stocks.data !== undefined) &&
+    !!topVolume &&
+    volume.every((v) => !v.isLoading);
+
   const topChangeRateThemes = topRateThemes?.map((theme, i) => {
     return {
       ...theme,
       stocks: (topThemeStocks[i]?.data ?? []).map((stock) => {
-        const volResult = volume.find(
-          (volume) => volume.data?.stockCode === stock.stockCode,
-        );
-        return { ...stock, volume: volResult?.data?.volume ?? 0 };
+        const volData = volumeMap.get(stock.stockCode);
+        const dbStock = dbThemeData?.topChangeRateThemes
+          ?.flatMap((t) => t.stocks)
+          .find((s) => s.stockCode === stock.stockCode);
+        return {
+          ...stock,
+          volume:
+            volData === "실패" || volData === undefined
+              ? dbStock?.volume
+              : volData.volume,
+        };
       }),
     };
   });
@@ -94,16 +111,13 @@ export default function ThemesPage() {
   // 5. 가공된 데이터 저장
   useEffect(() => {
     if (!allLoaded) return;
-    console.log("db에 저장할까요?");
     fetch("/api/themes/save", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ topVolumeThemes, topChangeRateThemes }),
-      // body: JSON.stringify({ topVolumeThemes }),
     }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["themes-db"] });
     });
-    console.log("db에 저장되었습니다.");
   }, [allLoaded, themesUpdatedAt]);
 
   // 재요청 트리거
@@ -141,6 +155,11 @@ export default function ThemesPage() {
   // other: 수급 불러오기(프로그램)
   const programFlowResults = useStockProgramFlow(allStockCodes);
 
+  // 수급 로딩
+  const supplyLoaded =
+    investorFlowResults.every((supply) => !supply.isLoading) &&
+    programFlowResults.every((supply) => !supply.isLoading);
+
   const investorMap = new Map(
     allStockCodes.map((stockCode, i) => [
       stockCode,
@@ -151,6 +170,69 @@ export default function ThemesPage() {
     allStockCodes.map((code, i) => [code, programFlowResults[i]?.data]),
   );
 
+  // 수급 저장용 데이터 빌드 (실패한 종목은 db 데이터 사용)
+  const topVolumeSupply = topVolumeThemes?.map((theme) => ({
+    ...theme,
+    stocks: theme.stocks.map((stock) => {
+      const investor = investorMap.get(stock.stockCode);
+      const program = programMap.get(stock.stockCode);
+      const investorValid = typeof investor === "object" && investor !== null;
+      const programValid = typeof program === "object" && program !== null;
+      const dbSupply = dbSupplyData?.topVolumeSupply
+        ?.flatMap((t) => t.stocks)
+        .find((s) => s.stockCode === stock.stockCode);
+      return {
+        ...stock,
+        institution: investorValid
+          ? Number(investor.orgn_ntby_tr_pbmn)
+          : dbSupply?.institution,
+        foreign: investorValid
+          ? Number(investor.frgn_ntby_tr_pbmn)
+          : dbSupply?.foreign,
+        program: programValid
+          ? Number(program.prm_netprps_amt.replace(/^--/, "-"))
+          : dbSupply?.program,
+      };
+    }),
+  }));
+
+  const topChangeRateSupply = topChangeRateThemes?.map((theme) => ({
+    ...theme,
+    stocks: theme.stocks.map((stock) => {
+      const investor = investorMap.get(stock.stockCode);
+      const program = programMap.get(stock.stockCode);
+      const investorValid = typeof investor === "object" && investor !== null;
+      const programValid = typeof program === "object" && program !== null;
+      const dbSupply = dbSupplyData?.topChangeRateSupply
+        ?.flatMap((t) => t.stocks)
+        .find((s) => s.stockCode === stock.stockCode);
+      return {
+        ...stock,
+        institution: investorValid
+          ? Number(investor.orgn_ntby_tr_pbmn)
+          : dbSupply?.institution,
+        foreign: investorValid
+          ? Number(investor.frgn_ntby_tr_pbmn)
+          : dbSupply?.foreign,
+        program: programValid
+          ? Number(program.prm_netprps_amt.replace(/^--/, "-"))
+          : dbSupply?.program,
+      };
+    }),
+  }));
+
+  // 수급 데이터 저장
+  useEffect(() => {
+    if (!supplyLoaded || allStockCodes.length === 0) return;
+    fetch("/api/supply/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ topVolumeSupply, topChangeRateSupply }),
+    }).then(() => {
+      queryClient.invalidateQueries({ queryKey: ["supply-db"] });
+    });
+  }, [supplyLoaded]);
+
   // topVolmeThmes에 매핑
   const topVolumeThemesWithSupply = topVolumeThemes?.map((theme) => ({
     ...theme,
@@ -159,8 +241,10 @@ export default function ThemesPage() {
       institution: Number(
         investorMap.get(stock.stockCode)?.orgn_ntby_tr_pbmn ?? 0,
       ),
-      foreign: Number(investorMap.get(stock.stockCode)?.frgn_ntby_tr_pbmn ?? 0),
-      program: Number(programMap.get(stock.stockCode)?.prm_netprps_amt ?? 0),
+      foreign: investorMap.get(stock.stockCode)?.frgn_ntby_tr_pbmn ?? "외국인?",
+      program: (
+        programMap.get(stock.stockCode)?.prm_netprps_amt ?? "sss"
+      ).replace(/^--/, "-"),
     })),
   }));
 
@@ -173,12 +257,14 @@ export default function ThemesPage() {
         investorMap.get(stock.stockCode)?.orgn_ntby_tr_pbmn ?? 0,
       ),
       foreign: Number(investorMap.get(stock.stockCode)?.frgn_ntby_tr_pbmn ?? 0),
-      program: Number(programMap.get(stock.stockCode)?.prm_netprps_amt ?? 0),
+      program: (
+        programMap.get(stock.stockCode)?.prm_netprps_amt ?? "sss"
+      ).replace(/^--/, "-"),
     })),
   }));
 
   // 6. 로딩 스켈레톤: db없을 때,
-  if (!dbThemeData?.topVolumeThemes)
+  if (!dbThemeData?.topVolumeThemes || !dbSupplyData?.topChangeRateSupply)
     return (
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-6">
@@ -201,12 +287,12 @@ export default function ThemesPage() {
 
   const volumeThemes =
     activeView === "supply"
-      ? topVolumeThemesWithSupply // 나중에 db데이터로 고침.
+      ? dbSupplyData?.topVolumeSupply
       : dbThemeData?.topVolumeThemes;
 
   const changeRateThemes =
     activeView === "supply"
-      ? topChangeRateThemesWithSupply // 나중에 db데이터로 고침.
+      ? dbSupplyData?.topChangeRateSupply
       : dbThemeData?.topChangeRateThemes;
 
   const themesToShow = activeTab === "volume" ? volumeThemes : changeRateThemes;
@@ -224,6 +310,8 @@ export default function ThemesPage() {
               queryClient.invalidateQueries({ queryKey: ["themes"] });
               queryClient.invalidateQueries({ queryKey: ["themestocks"] });
               queryClient.invalidateQueries({ queryKey: ["topVolume"] });
+              queryClient.removeQueries({ queryKey: ["stockInvestorFlow"] });
+              queryClient.removeQueries({ queryKey: ["stockProgramFlow"] });
             }}
           >
             {isFetching ? "최신데이터를 불러오고 있습니다..." : "새로고침"}
