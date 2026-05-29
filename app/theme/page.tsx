@@ -78,10 +78,13 @@ export default function ThemesPage() {
     .map((stock) => stock.stockCode);
 
   const volume = useVolume(stockCodes);
+  // console.log("volume", JSON.stringify(volume));
 
+  const uniqueStockCodes = [...new Set(stockCodes)];
   const volumeMap = new Map(
-    stockCodes.map((code, i) => [code, volume[i]?.data]),
+    uniqueStockCodes.map((code, i) => [code, volume[i]?.data]),
   );
+  // console.log("volumeMap", volumeMap);
 
   // 4. 로딩
   const allLoaded =
@@ -152,9 +155,10 @@ export default function ThemesPage() {
 
   // other: 수급 불러오기(기관, 외국인)
   const investorFlowResults = useStockInvestorFlow(allStockCodes);
+  console.log("원본", JSON.stringify(investorFlowResults));
   // other: 수급 불러오기(프로그램)
   const programFlowResults = useStockProgramFlow(allStockCodes);
-
+  // console.log("원본", JSON.stringify(programFlowResults));
   // 수급 로딩
   const supplyLoaded =
     investorFlowResults.every((supply) => !supply.isLoading) &&
@@ -166,9 +170,11 @@ export default function ThemesPage() {
       investorFlowResults[i]?.data,
     ]),
   );
+  console.log("가공", investorMap);
   const programMap = new Map(
     allStockCodes.map((code, i) => [code, programFlowResults[i]?.data]),
   );
+  // console.log("가공", programMap);
 
   // 수급 저장용 데이터 빌드 (실패한 종목은 db 데이터 사용)
   const topVolumeSupply = topVolumeThemes?.map((theme) => ({
