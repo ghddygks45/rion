@@ -33,5 +33,8 @@ export async function POST(request: Request) {
       },
     }),
   ]);
+
+  console.log(" GET /api/themes/save: db에 오늘의 테마 저장");
+
   return NextResponse.json({ topVolumeThemes });
 }

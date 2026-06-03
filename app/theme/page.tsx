@@ -32,6 +32,10 @@ export default function ThemesPage() {
 
   const isFetching = useIsFetching(); // 현재 fetching 중인 쿼리 수
 
+  // 새로고침 로직
+  const [isReFetching, setIsReFetching] = useState(false);
+  const isRefreshing = isReFetching && isFetching > 0;
+
   // 1. DB에 데이터 확인(상승률)
   const { data: dbThemeData, isLoading: dbThemeLoading } =
     useTodayThemesFromDB();
@@ -130,6 +134,8 @@ export default function ThemesPage() {
       queryClient.invalidateQueries({ queryKey: ["themes"] });
       queryClient.invalidateQueries({ queryKey: ["themestocks"] });
       queryClient.invalidateQueries({ queryKey: ["topVolume"] });
+      queryClient.invalidateQueries({ queryKey: ["stockInvestorFlow"] });
+      queryClient.invalidateQueries({ queryKey: ["stockProgramFlow"] });
       console.log("재요청 할까요?");
     }, STALE_MS);
     console.log("재요청 되었습니다.");
@@ -310,17 +316,21 @@ export default function ThemesPage() {
         <div className="flex gap-2 items-end">
           <Title level={1}>오늘의 테마</Title>
           <Button
-            disabled={isFetching > 0}
+            disabled={isRefreshing}
             size="sm"
-            onClick={() => {
-              queryClient.invalidateQueries({ queryKey: ["themes"] });
-              queryClient.invalidateQueries({ queryKey: ["themestocks"] });
-              queryClient.invalidateQueries({ queryKey: ["topVolume"] });
-              queryClient.removeQueries({ queryKey: ["stockInvestorFlow"] });
-              queryClient.removeQueries({ queryKey: ["stockProgramFlow"] });
+            onClick={async () => {
+              setIsReFetching(true);
+              await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ["themes"] }),
+                queryClient.invalidateQueries({ queryKey: ["themestocks"] }),
+                queryClient.invalidateQueries({ queryKey: ["topVolume"] }),
+                queryClient.removeQueries({ queryKey: ["stockInvestorFlow"] }),
+                queryClient.removeQueries({ queryKey: ["stockProgramFlow"] }),
+              ]);
+              setIsReFetching(false);
             }}
           >
-            {isFetching ? "최신데이터를 불러오고 있습니다..." : "새로고침"}
+            {isRefreshing ? "최신데이터를 불러오고 있습니다..." : "새로고침"}
           </Button>
         </div>
         <div className="flex gap-2">
