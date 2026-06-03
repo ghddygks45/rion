@@ -16,7 +16,7 @@ export function useAllThemeStocks(themes: Theme[]) {
           themeId: theme.themeId,
           stockCode: stock.stk_cd,
           stockName: stock.stk_nm,
-          price: parseFloat(stock.cur_prc),
+          price: Math.abs(parseFloat(stock.cur_prc)),
           changeRate: parseFloat(stock.flu_rt),
         }));
       },

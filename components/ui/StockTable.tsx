@@ -4,7 +4,7 @@ import Title from "./Title";
 import { themeStock } from "@/features/themes/types";
 
 function formatPrice(price: number) {
-  return price.toLocaleString("ko-KR") + "원";
+  return price.toLocaleString("ko-KR");
 }
 
 function formatVolume(volume: number) {
@@ -48,13 +48,13 @@ export default function StockTable({
               <th className="py-3 pl-4 font-medium text-xs text-text-disabled tracking-wider w-[35%]">
                 종목명
               </th>
-              <th className="py-3 font-medium text-xs text-text-disabled tracking-wider text-right w-[25%]">
+              <th className="py-3 font-medium text-xs text-text-disabled tracking-wider text-right w-[30%]">
                 {view === "price" ? "가격" : "외국인"}
               </th>
-              <th className="py-3 font-medium text-xs text-text-disabled tracking-wider text-right w-[18%]">
+              <th className="py-3 font-medium text-xs text-text-disabled tracking-wider text-right w-[25%]">
                 {view === "price" ? "등락률" : "기관"}
               </th>
-              <th className="py-3 pr-4 font-medium text-xs text-text-disabled tracking-wider text-right w-[20%]">
+              <th className="py-3 pr-4 font-medium text-xs text-text-disabled tracking-wider text-right w-[25%]">
                 {view === "price" ? "거래대금" : "프로그램"}
               </th>
             </tr>
@@ -81,22 +81,24 @@ export default function StockTable({
                   </td>
                   <td className="py-3 text-right text-text tabular-nums">
                     {view === "price"
-                      ? formatPrice(stock.price)
-                      : (stock.foreign ?? 0)}
+                      ? formatPrice(stock.price) + "원"
+                      : formatPrice(stock.foreign ?? 0)}
                   </td>
                   <td className="py-3 text-right">
-                    <Badge variant={variant}>
-                      {view === "price"
-                        ? formatChangeRate(stock.changeRate)
-                        : (stock.institution ?? 0)}
-                    </Badge>
+                    {view === "price" ? (
+                      <Badge variant={variant}>
+                        {formatChangeRate(stock.changeRate)}
+                      </Badge>
+                    ) : (
+                      formatPrice(stock.institution ?? 0)
+                    )}
                   </td>
                   <td className="py-3 pr-4 text-right text-text-secondary tabular-nums">
                     {view === "price"
                       ? stock.volume !== undefined
                         ? formatVolume(stock.volume)
                         : "-"
-                      : (stock.program ?? 0)}
+                      : formatPrice(stock.program ?? 0)}
                   </td>
                 </tr>
               );
