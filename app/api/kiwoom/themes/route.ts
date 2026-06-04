@@ -13,5 +13,6 @@ export async function GET() {
       stex_tp: "3",
     },
   );
+  console.log(themesData);
   return NextResponse.json(themesData);
 }
