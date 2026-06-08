@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { hankukFetch } from "@/server/hankuk/hankukFetcher";
 import { MarketIndexResponse } from "@/server/hankuk/types";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const kospi = await hankukFetch<MarketIndexResponse>(
     "GET",
