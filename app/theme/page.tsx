@@ -92,7 +92,7 @@ export default function ThemesPage() {
 
   // 4. 로딩
   const allLoaded =
-    allStocks.every((stocks) => !stocks.isLoading) &&
+    allStocks.every((themeStockQuery) => !themeStockQuery.isLoading) &&
     !!topVolume &&
     volume.every((v) => !v.isLoading);
 
