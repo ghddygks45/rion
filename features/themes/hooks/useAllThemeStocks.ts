@@ -20,6 +20,8 @@ export function useAllThemeStocks(themes: Theme[]) {
           changeRate: parseFloat(stock.flu_rt),
         }));
       },
+      retry: 3,
+      retryDelay: 3000,
     })),
   });
 }
