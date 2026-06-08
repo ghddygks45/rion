@@ -52,6 +52,13 @@ app.get("/health", (_, res) => {
   res.json({ ok: true });
 });
 
+app.get("/debug", (_, res) => {
+  res.json({
+    hankukToken: !!hankukToken,
+    expiresAt: new Date(hankukTokenExpiresAt).toISOString(),
+  });
+});
+
 // ── Kiwoom 프록시: POST /kiwoom ───────────────────────────
 // body: { url, apiId, body }
 app.post("/kiwoom", async (req, res) => {
@@ -80,6 +87,7 @@ app.post("/kiwoom", async (req, res) => {
 // ── Hankuk 프록시: POST /hankuk ───────────────────────────
 // body: { url, trId, method, params }
 app.post("/hankuk", async (req, res) => {
+  console.log("[hankuk] 요청 들어옴", req.body?.trId);
   try {
     const { url, trId, method = "POST", params } = req.body;
     const token = await getHankukToken();
