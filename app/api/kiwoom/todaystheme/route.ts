@@ -55,7 +55,6 @@ export async function GET() {
     }
     return NextResponse.json({ result });
   } catch (error) {
-    console.log(error);
     return NextResponse.json({
       result: [],
       error: error instanceof Error ? error.message : String(error),

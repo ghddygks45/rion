@@ -87,7 +87,6 @@ app.post("/kiwoom", async (req, res) => {
 // ── Hankuk 프록시: POST /hankuk ───────────────────────────
 // body: { url, trId, method, params }
 app.post("/hankuk", async (req, res) => {
-  console.log("[hankuk] 요청 들어옴", req.body?.trId);
   try {
     const { url, trId, method = "POST", params } = req.body;
     const token = await getHankukToken();

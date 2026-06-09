@@ -22,6 +22,5 @@ export async function getHankukToken(): Promise<string> {
   const data = await res.json();
   cachedToken = data.access_token;
   tokenExpiresAt = Date.now() + 23 * 60 * 60 * 1000; // 23시간 (만료 1시간 전 갱신)
-  console.log("한국 토큰", data);
   return cachedToken as string;
 }

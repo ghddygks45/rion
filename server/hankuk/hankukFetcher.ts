@@ -1,7 +1,6 @@
 import { getHankukToken } from "./auth";
 
 const PROXY_URL = process.env.HANKUK_BASE_URL;
-console.log("1. hankukFetch 진입, PROXY_URL:", !!PROXY_URL);
 
 export async function hankukFetch<T>(
   method: "GET" | "POST" = "POST",
@@ -10,13 +9,11 @@ export async function hankukFetch<T>(
   params: Record<string, string>,
 ): Promise<T> {
   if (PROXY_URL) {
-    console.log("2.프록시 경로 진입");
     const res = await fetch(`${PROXY_URL}/hankuk`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ url, trId, method, params }),
     });
-    console.log("3.프록시 응답", res.status);
     return res.json() as Promise<T>;
   }
 

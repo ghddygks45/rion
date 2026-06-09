@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Providers } from "@/lib/query-client";
 import { ThemeProvider } from "@/lib/theme";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Header from "@/components/layout/Header";
 
 const pretendard = localFont({
@@ -39,6 +40,7 @@ export default function RootLayout({
             <Header />
             {children}
           </ThemeProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
         </Providers>
       </body>
     </html>

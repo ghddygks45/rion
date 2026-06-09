@@ -13,7 +13,7 @@ export async function GET() {
     }),
   ]);
 
-  console.log(" GET /api/supply/today: db에서 수급데이터 테마 불러오기");
+  // console.log(" GET /api/supply/today: db에서 수급데이터 테마 불러오기");
 
   return NextResponse.json({
     topVolumeSupply: topVolumeSupply?.data ?? null,

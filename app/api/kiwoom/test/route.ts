@@ -13,8 +13,8 @@ export async function GET() {
       strt_dt: today,
     },
   );
-  console.log("============" + detail.daly_trde_dtl[0] + "============");
-  console.log(JSON.stringify(detail.daly_trde_dtl[0]));
+  // console.log("============" + detail.daly_trde_dtl[0] + "============");
+  // console.log(JSON.stringify(detail.daly_trde_dtl[0]));
 
   return NextResponse.json(detail.daly_trde_dtl[0]);
 }

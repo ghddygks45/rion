@@ -1,20 +1,33 @@
 import { useQueries } from "@tanstack/react-query";
-import { KiwoomDailyTradeDetailResponse } from "@/server/kiwoom/types";
 
 export function useVolume(stockCodes: string[]) {
   const uniqueCodes = [...new Set(stockCodes)];
   return useQueries({
     queries: uniqueCodes.map((stockCode, index) => ({
       queryKey: ["volume", stockCode],
-      queryFn: async (): Promise<{ stockCode: string; volume: number } | "실패"> => {
+      queryFn: async (): Promise<
+        { stockCode: string; volume: number } | "실패"
+      > => {
+        console.log(`[요청 시작] ${stockCode}`);
         await new Promise((r) => setTimeout(r, index * 100));
         const res = await fetch(
           `/api/kiwoom/stock-volume?stockCode=${stockCode}`,
         );
-        return res.json();
+        const data = await res.json();
+        if (data === "실패") {
+          console.log(`[volume] 재시도 예정: ${stockCode}`);
+          throw new Error("실패");
+        }
+        return data;
       },
       retry: 3,
-      retryDelay: 3000,
+      retryDelay: (attemptIndex: number) => {
+        const delay = 3000 + Math.random() * 2000; // 3~5초
+        console.log(
+          `[재시도 예정] ${stockCode} - ${attemptIndex + 1}번째, ${delay}초 후`,
+        );
+        return delay;
+      },
     })),
   });
 }

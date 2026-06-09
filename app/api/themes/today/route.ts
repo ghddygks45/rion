@@ -13,7 +13,7 @@ export async function GET() {
     }),
   ]);
 
-  console.log(" GET /api/themes/today: db에서 오늘의 테마 불러오기");
+  // console.log(" GET /api/themes/today: db에서 오늘의 테마 불러오기");
 
   return NextResponse.json({
     topVolumeThemes: topVolumeThemes?.data ?? null,

@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     }),
   ]);
 
-  console.log(" GET /api/supply/today: db에 수급데이터 저장");
+  // console.log(" GET /api/supply/today: db에 수급데이터 저장");
 
   return NextResponse.json({ ok: true });
 }

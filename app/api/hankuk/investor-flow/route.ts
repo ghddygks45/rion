@@ -5,7 +5,6 @@ import { InvestorFlowItem } from "@/server/hankuk/types";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-  console.log("한국투자증권");
   const { searchParams } = new URL(request.url);
   const stockCode = searchParams.get("stockCode")?.split("_")[0] ?? "";
   try {
