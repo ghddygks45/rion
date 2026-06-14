@@ -6,7 +6,8 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const stockCode = searchParams.get("stockCode")?.split("_")[0] ?? "";
+  // const stockCode = searchParams.get("stockCode")?.split("_")[0] ?? "";
+  const stockCode = searchParams.get("stockCode") ?? "";
   try {
     const data = await hankukFetch<InvestorFlowItem>(
       "GET",
@@ -17,8 +18,8 @@ export async function GET(request: Request) {
         FID_INPUT_ISCD: stockCode,
       },
     );
-    return NextResponse.json(data.output[0] ?? "실패");
+    return NextResponse.json(data.output[0] ?? null);
   } catch {
-    return NextResponse.json("실패");
+    return NextResponse.json("error");
   }
 }

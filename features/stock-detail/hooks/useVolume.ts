@@ -8,14 +8,14 @@ export function useVolume(stockCodes: string[]) {
       queryFn: async (): Promise<
         { stockCode: string; volume: number } | "실패"
       > => {
-        console.log(`[요청 시작] ${stockCode}`);
+        // console.log(`[요청 시작] ${stockCode}`);
         await new Promise((r) => setTimeout(r, index * 100));
         const res = await fetch(
           `/api/kiwoom/stock-volume?stockCode=${stockCode}`,
         );
         const data = await res.json();
         if (data === "실패") {
-          console.log(`[volume] 재시도 예정: ${stockCode}`);
+          // console.log(`[volume] 재시도 예정: ${stockCode}`);
           throw new Error("실패");
         }
         return data;
@@ -23,11 +23,15 @@ export function useVolume(stockCodes: string[]) {
       retry: 3,
       retryDelay: (attemptIndex: number) => {
         const delay = 3000 + Math.random() * 2000; // 3~5초
-        console.log(
-          `[재시도 예정] ${stockCode} - ${attemptIndex + 1}번째, ${delay}초 후`,
-        );
+        // console.log(
+        //   `[재시도 예정] ${stockCode} - ${attemptIndex + 1}번째, ${delay}초 후`,
+        // );
         return delay;
       },
     })),
+    combine: (results) => ({
+      data: results,
+      allSuccess: results.every((query) => query.isSuccess),
+    }),
   });
 }

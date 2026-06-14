@@ -21,7 +21,10 @@ export function useTopThemeStocks(themes: Theme[]) {
         }));
       },
       retry: 3,
-      retryDelay: 3000,
+      retryDelay: () => {
+        const delay = 3000 + Math.random() * 2000; // 3~5초
+        return delay;
+      },
     })),
   });
 }
