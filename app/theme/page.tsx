@@ -22,10 +22,14 @@ import { useStockProgramFlow } from "@/features/themes/hooks/useStockProgramFlow
 import Toggle from "@/components/ui/Toggle";
 import { useTodaySupplyFromDB } from "@/features/themes/hooks/useTodaySupplyFromDB";
 import { InvestorFlowItem } from "@/server/hankuk/types";
+import { useThemePageData } from "@/features/themes/utils/useThemePageData";
 
 const STALE_MS = 2 * 60 * 1000;
 
 export default function ThemesPage() {
+  const { topVolumeThemes: newTopVolumeThemes } = useThemePageData();
+  console.log("newTopVolumeThemes", newTopVolumeThemes);
+
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<string>("volume");
 
@@ -256,77 +260,6 @@ export default function ThemesPage() {
       queryClient.invalidateQueries({ queryKey: ["supply-db"] });
     });
   }, [supplyLoaded]);
-
-  // useEffect(() => {
-  //   // console.log("뭐냐");
-  //   if (!supplyLoaded) return;
-
-  //   // console.log("실행");
-  //   // 마지막 실패한 수급데이터 가져오기(한국투자증권)
-  //   const failedCodes = allStockCodes.filter(
-  //     (stockCode) => !investorMap.get(stockCode),
-  //   );
-
-  //   // console.log("실패한 코드들", failedCodes);
-
-  //   (async () => {
-  //     const retryResults: Record<string, InvestorFlowItem | null> = {};
-  //     console.log("여기실행?");
-  //     for (const stockCode of failedCodes) {
-  //       // queryClient.resetQueries({
-  //       //   queryKey: ["stockInvestorFlow", stockCode],
-  //       // });
-  //       // console.log("stockCode", stockCode);
-  //       await new Promise((r) => setTimeout(r, 100)); // 간격
-  //       const res = await fetch(
-  //         `/api/hankuk/investor-flow?stockCode=${stockCode}`,
-  //       );
-  //       retryResults[stockCode] = await res.json();
-  //       // console.log("retryResults", retryResults);
-  //     }
-
-  //     // 기존 데이터 + results merge해서 DB 저장
-  //     const mergedInvestorMap = new Map([
-  //       ...investorMap,
-  //       ...Object.entries(retryResults),
-  //     ]);
-  //     // console.log("mergedInvestorMap", mergedInvestorMap);
-
-  //     const mergedTopVolumeSupply = topVolumeThemes?.map((theme) => ({
-  //       ...theme,
-  //       stocks: theme.stocks.map((stock) => {
-  //         const investor = mergedInvestorMap.get(stock.stockCode);
-  //         const program = programMap.get(stock.stockCode);
-  //         const investorValid =
-  //           typeof investor === "object" && investor !== null;
-  //         const programValid = typeof program === "object" && program !== null;
-  //         const dbSupply = dbSupplyData?.topVolumeSupply
-  //           ?.flatMap((t) => t.stocks)
-  //           .find((s) => s.stockCode === stock.stockCode);
-  //         return {
-  //           ...stock,
-  //           institution: investorValid
-  //             ? Number(investor.orgn_ntby_tr_pbmn)
-  //             : dbSupply?.institution,
-  //           foreign: investorValid
-  //             ? Number(investor.frgn_ntby_tr_pbmn)
-  //             : dbSupply?.foreign,
-  //           program: programValid
-  //             ? Number(program.prm_netprps_amt.replace(/^--/, "-"))
-  //             : dbSupply?.program,
-  //         };
-  //       }),
-  //     }));
-
-  //     fetch("/api/supply/save", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ topVolumeSupply: mergedTopVolumeSupply, topChangeRateSupply }),
-  //     }).then(() => {
-  //       queryClient.invalidateQueries({ queryKey: ["supply-db"] });
-  //     });
-  //   })();
-  // }, [supplyLoaded]);
 
   // topVolmeThmes에 매핑
   const topVolumeThemesWithSupply = topVolumeThemes?.map((theme) => ({
