@@ -75,7 +75,7 @@ export function useThemePageData() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!allLoaded) return;
+    if (!allLoaded || topVolumeThemes.length === 0) return;
     fetch("/api/themes/save", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
