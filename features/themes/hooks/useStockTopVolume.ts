@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { KiwoomTopVolumeResponse } from "@/server/kiwoom/types";
 import { stockTopVolume } from "../types";
 
-export function useStockTopVolum() {
+export function useStockTopVolume() {
   return useQuery<stockTopVolume[]>({
     queryKey: ["topVolume"],
     queryFn: async () => {

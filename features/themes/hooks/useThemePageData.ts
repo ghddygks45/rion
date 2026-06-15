@@ -1,19 +1,19 @@
 import { useVolume } from "@/features/stock-detail/hooks/useVolume";
 import { useAllThemeStocks } from "../hooks/useAllThemeStocks";
-import { useStockTopVolum } from "../hooks/useStockTopVolum";
+import { useStockTopVolume } from "../hooks/useStockTopVolume";
 import { useThemes } from "../hooks/useThemes";
 import { useTopThemeStocks } from "../hooks/useTopThemeStocks";
-import { buildTopVolumeThemes } from "./buildTopVolumeThemes";
-import { buildVolumeMap } from "./buildVolumeMap";
+import { buildTopVolumeThemes } from "../utils/buildTopVolumeThemes";
+import { buildVolumeMap } from "../utils/buildVolumeMap";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTodayThemesFromDB } from "../hooks/useTodayThemesFromDB";
-import { buildTopChangeRateThemes } from "./buildTopChangeRateThemes";
+import { buildTopChangeRateThemes } from "../utils/buildTopChangeRateThemes";
 import { useStockInvestorFlow } from "../hooks/useStockInvestorFlow";
 import { useStockProgramFlow } from "../hooks/useStockProgramFlow";
-import { buildSupplyMap } from "./buildSupplyMap";
+import { buildSupplyMap } from "../utils/buildSupplyMap";
 import { useTodaySupplyFromDB } from "../hooks/useTodaySupplyFromDB";
-import { buildSupplyThemes } from "./buildSupplyThemes";
+import { buildSupplyThemes } from "../utils/buildSupplyThemes";
 
 export function useThemePageData() {
   const { data: dbThemeData } = useTodayThemesFromDB();
@@ -24,7 +24,7 @@ export function useThemePageData() {
   const { data: themes } = useThemes();
   const { data: allStockResults } = useAllThemeStocks(themes ?? []);
   const { data: topVolume, dataUpdatedAt: themesUpdatedAt } =
-    useStockTopVolum();
+    useStockTopVolume();
 
   const allStocksData = allStockResults.map((query) => query.data ?? []);
 

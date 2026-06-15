@@ -11,17 +11,10 @@ import { useIsFetching, useQueryClient } from "@tanstack/react-query";
 import Button from "@/components/ui/Button";
 import Tab from "@/components/ui/Tab";
 import Toggle from "@/components/ui/Toggle";
-import { useThemePageData } from "@/features/themes/utils/useThemePageData";
-
-// const STALE_MS = 2 * 60 * 1000;
+import { useThemePageData } from "@/features/themes/hooks/useThemePageData";
 
 export default function ThemesPage() {
   const { dbThemeData, dbSupplyData, isLoading } = useThemePageData();
-
-  // // 리펙토링
-  // const { topVolumeThemes } = useThemePageData();
-  // const { volumeDataMap } = useThemePageData();
-  // console.log("volumeDataMap", volumeDataMap);
 
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<string>("volume");
