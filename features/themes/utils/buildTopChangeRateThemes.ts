@@ -14,8 +14,8 @@ export function buildTopChangeRateThemes(
       stocks: (topThemeStocks[i] ?? []).map((stock) => {
         const volData = volumeDataMap.get(stock.stockCode);
         const dbStock = dbFallback
-          ?.flatMap((t) => t.stocks)
-          .find((s) => s.stockCode === stock.stockCode);
+          ?.flatMap((theme) => theme.stocks)
+          .find((dbStock) => dbStock.stockCode === stock.stockCode);
         return {
           ...stock,
           volume:

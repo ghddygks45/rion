@@ -10,7 +10,7 @@ export function useStockInvestorFlow(stockCodes: string[]) {
     queries: uniqueCodes.map((stockCode, index) => ({
       queryKey: ["stockInvestorFlow", stockCode],
       queryFn: async (): Promise<InvestorFlowItem> => {
-        // console.log(`[요청 시작] ${stockCode?.split("_")[0]}`);
+        console.log(`[요청 시작] ${stockCode?.split("_")[0]}`);
         await new Promise((r) => setTimeout(r, index * 100));
         const res = await fetch(
           `/api/hankuk/investor-flow?stockCode=${stockCode}`,
