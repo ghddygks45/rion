@@ -5,6 +5,7 @@ import { Providers } from "@/lib/query-client";
 import { ThemeProvider } from "@/lib/theme";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Header from "@/components/layout/Header";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const pretendard = localFont({
   src: "../node_modules/pretendard/dist/web/static/woff2/Pretendard-Regular.woff2",
@@ -42,6 +43,7 @@ export default function RootLayout({
           </ThemeProvider>
           <ReactQueryDevtools initialIsOpen={false} />
         </Providers>
+        <GoogleAnalytics gaId="G-7GXNVZNNB1" />
       </body>
     </html>
   );
