@@ -5,6 +5,7 @@ import { KiwoomThemeGroupResponse } from "@/server/kiwoom/types";
 export function useThemes() {
   return useQuery<Theme[]>({
     queryKey: ["themes"],
+    enabled: process.env.NEXT_PUBLIC_SKIP_FETCH !== 'true',
     queryFn: async () => {
       const res = await fetch("/api/kiwoom/themes");
       const data: KiwoomThemeGroupResponse = await res.json();

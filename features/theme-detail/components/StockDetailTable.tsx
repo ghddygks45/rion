@@ -54,7 +54,7 @@ export default function StockDetailTable({ stocks }: StockDetailTableProps) {
                 className="relative border-t border-border hover:bg-black/5 dark:hover:bg-white/20"
               >
                 <td className="py-3 pl-4 text-text font-medium">
-                  <Link href={stock.href} className="absolute inset-0" />
+                  {/* <Link href={stock.href} className="absolute inset-0" /> */}
                   {stock.name}
                 </td>
                 <td className={`py-3 text-right ${rateClass}`}>

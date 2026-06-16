@@ -7,6 +7,7 @@ export function useStockProgramFlow(stockCodes: string[]) {
   return useQueries({
     queries: uniqueCodes.map((stockCode, index) => ({
       queryKey: ["stockProgramFlow", stockCode],
+      enabled: process.env.NEXT_PUBLIC_SKIP_FETCH !== 'true',
       queryFn: async (): Promise<ProgramFlowItem> => {
         // console.log(`[요청 시작] ${stockCode}`);
         await new Promise((r) => setTimeout(r, index * 100));

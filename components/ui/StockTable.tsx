@@ -33,7 +33,7 @@ export default function StockTable({
 }: StockTableProps) {
   return (
     <div
-      className={`bg-surface border border-border rounded-lg overflow-hidden ${className}`}
+      className={`relative bg-surface border-t-0 border-b-0 xl:border border-border rounded-lg overflow-hidden w-[calc(100%+32px)] left-[-16px] xl:w-full xl:left-0 ${className}`}
     >
       {title && (
         <div className="px-4 py-3 border-b border-border">
@@ -41,8 +41,8 @@ export default function StockTable({
         </div>
       )}
 
-      <div>
-        <table className="w-full text-sm table-fixed">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm table-fixed min-w-[300px]">
           <thead>
             <tr className="text-left">
               <th className="py-3 pl-4 font-medium text-xs text-text-disabled tracking-wider w-[35%]">
@@ -73,10 +73,10 @@ export default function StockTable({
                   className="relative border-t border-border hover:bg-black/5 dark:hover:bg-white/20"
                 >
                   <td className="py-3 pl-4 text-text font-medium">
-                    <Link
+                    {/* <Link
                       href={`/stock/${stock.stockCode}`}
                       className="absolute inset-0"
-                    />
+                    /> */}
                     {stock.stockName}
                   </td>
                   <td className="py-3 text-right text-text tabular-nums">

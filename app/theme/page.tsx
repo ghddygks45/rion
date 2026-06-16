@@ -29,11 +29,11 @@ export default function ThemesPage() {
 
   if (isLoading)
     return (
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-6">
         <div className="mb-6">
           <Title level={1}>오늘의 테마</Title>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-6 gap-3">
           {Array.from({ length: 9 }).map((_, i) => (
             <Card key={i}>
               <div className="flex items-center justify-between mb-2">
@@ -60,12 +60,13 @@ export default function ThemesPage() {
 
   const themesToShow = activeTab === "volume" ? volumeThemes : changeRateThemes;
 
-  // 7. 화면표시
   return (
-    <main className="max-w-7xl mx-auto px-6 py-8">
-      <div className="flex items-end justify-between mb-6">
-        <div className="flex gap-2 items-end">
-          <Title level={1}>오늘의 테마</Title>
+    <main className="max-w-7xl mx-auto px-4 py-6">
+      <div className="relative flex w-full mb-6 flex-col md:flex-row md:items-end">
+        <div className="flex-1 mb-4 md:mb-0 min-w-0">
+          <Title level={1} className="inline-block align-bottom mr-2">
+            오늘의 테마
+          </Title>
           <Button
             disabled={isRefreshing}
             size="sm"
@@ -84,26 +85,28 @@ export default function ThemesPage() {
             {isRefreshing ? "최신데이터를 불러오고 있습니다..." : "새로고침"}
           </Button>
         </div>
-        <div className="flex gap-2">
-          <Tab
-            tabs={[
-              { key: "volume", label: "거래대금 상위" },
-              { key: "changeRate", label: "테마 상승률 상위" },
-            ]}
-            activeKey={activeTab}
-            onChange={(tab) => setActiveTab(tab)}
-          />
-        </div>
-        <div className="flex gap-2">
-          <Toggle
-            checked={activeView === "supply"}
-            onChange={(toggle) => setActiveView(toggle ? "supply" : "price")}
-            labelLeft="현재가"
-            labelRight="수급"
-          />
+        <div className="flex md:items-center shrink-0 justify-end md:justify-between gap-4 self-end">
+          <div className="">
+            <Tab
+              tabs={[
+                { key: "volume", label: "거래대금 상위" },
+                { key: "changeRate", label: "테마 상승률 상위" },
+              ]}
+              activeKey={activeTab}
+              onChange={(tab) => setActiveTab(tab)}
+            />
+          </div>
+          <div className="absolute top-1 right-0 md:static">
+            <Toggle
+              checked={activeView === "supply"}
+              onChange={(toggle) => setActiveView(toggle ? "supply" : "price")}
+              labelLeft="현재가"
+              labelRight="수급"
+            />
+          </div>
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 xl:gap-6 gap-4">
         {themesToShow?.map((theme) => (
           <ThemeCard key={theme.themeId} theme={theme} view={activeView} />
         ))}

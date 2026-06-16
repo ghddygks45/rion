@@ -6,6 +6,7 @@ export function useTopThemeStocks(themes: Theme[]) {
   return useQueries({
     queries: themes.map((theme) => ({
       queryKey: ["themestocks", theme.themeId],
+      enabled: process.env.NEXT_PUBLIC_SKIP_FETCH !== 'true',
       queryFn: async (): Promise<themeStock[]> => {
         const res = await fetch(
           `/api/kiwoom/themestocks?themeId=${theme.themeId}`,

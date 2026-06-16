@@ -5,6 +5,7 @@ export function useVolume(stockCodes: string[]) {
   return useQueries({
     queries: uniqueCodes.map((stockCode, index) => ({
       queryKey: ["volume", stockCode],
+      enabled: process.env.NEXT_PUBLIC_SKIP_FETCH !== 'true',
       queryFn: async (): Promise<
         { stockCode: string; volume: number } | "실패"
       > => {

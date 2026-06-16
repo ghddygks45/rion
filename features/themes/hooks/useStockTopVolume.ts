@@ -5,6 +5,7 @@ import { stockTopVolume } from "../types";
 export function useStockTopVolume() {
   return useQuery<stockTopVolume[]>({
     queryKey: ["topVolume"],
+    enabled: process.env.NEXT_PUBLIC_SKIP_FETCH !== 'true',
     queryFn: async () => {
       const res = await fetch(`/api/kiwoom/top-volume`);
       const data: KiwoomTopVolumeResponse = await res.json();

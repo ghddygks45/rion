@@ -164,7 +164,7 @@ export function useThemePageData() {
 
   //***************************************************************
   // 자동갱신 (2분 주기)
-  const STALE_MS = 2 * 60 * 1000;
+  const STALE_MS = 10000 * 60 * 1000000;
   const dbDataExists = dbThemeData?.topVolumeThemes != null;
 
   useEffect(() => {

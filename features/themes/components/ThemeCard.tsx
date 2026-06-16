@@ -26,20 +26,17 @@ export default function ThemeCard({
   return (
     <>
       <Card>
-        <div
-          className="cursor-pointer"
-          onClick={() => router.push(`/theme/${theme.themeId}`)}
-        >
-          <div className="flex items-center justify-between mb-2">
+        <div onClick={() => router.push(`/theme/${theme.themeId}`)}>
+          <div className="flex items-center justify-between mb-4">
             <Title level={2}>{theme.themeName}</Title>
             <Badge variant={variant}>
               {sign}
               {theme.themeChangeRate.toFixed(2)}%
             </Badge>
           </div>
-          <p className="text-sm text-text-secondary mb-4">
+          {/* <p className="text-sm text-text-secondary mb-4">
             여기는 나중에 따로...
-          </p>
+          </p> */}
         </div>
 
         <StockTable stocks={theme.stocks} view={view} />

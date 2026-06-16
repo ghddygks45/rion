@@ -9,6 +9,7 @@ export function useStockInvestorFlow(stockCodes: string[]) {
   return useQueries({
     queries: uniqueCodes.map((stockCode, index) => ({
       queryKey: ["stockInvestorFlow", stockCode],
+      enabled: process.env.NEXT_PUBLIC_SKIP_FETCH !== 'true',
       queryFn: async (): Promise<InvestorFlowItem> => {
         console.log(`[요청 시작] ${stockCode?.split("_")[0]}`);
         await new Promise((r) => setTimeout(r, index * 100));
