@@ -119,3 +119,22 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Proxy server running on port ${PORT}`);
 });
+
+// 10분마다 Vercel cron 엔드포인트 호출 → 테마/수급 데이터 자동 갱신
+const VERCEL_URL = process.env.VERCEL_URL;
+const CRON_SECRET = process.env.CRON_SECRET;
+const CRON_INTERVAL_MS = 10 * 60 * 1000;
+
+if (VERCEL_URL && CRON_SECRET) {
+  setInterval(async () => {
+    try {
+      const res = await fetch(`${VERCEL_URL}/api/cron/refresh`, {
+        headers: { authorization: `Bearer ${CRON_SECRET}` },
+      });
+      console.log(`[cron] refresh → ${res.status}`);
+    } catch (err) {
+      console.error("[cron] refresh failed:", err);
+    }
+  }, CRON_INTERVAL_MS);
+  console.log(`[cron] 10분마다 ${VERCEL_URL}/api/cron/refresh 호출 시작`);
+}
