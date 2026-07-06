@@ -26,7 +26,7 @@ export default function ThemeCard({
   return (
     <>
       <Card>
-        <div onClick={() => router.push(`/theme/${theme.themeId}`)}>
+        <div>
           <div className="flex items-center justify-between mb-4">
             <Title level={2}>{theme.themeName}</Title>
             <Badge variant={variant}>

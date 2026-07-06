@@ -18,6 +18,10 @@ function formatChangeRate(rate: number) {
   return `${sign}${rate.toFixed(2)}%`;
 }
 
+function formatSupplyValue(value: number | undefined) {
+  return value !== undefined ? formatPrice(value) : "-";
+}
+
 type StockTableProps = {
   stocks: themeStock[];
   title?: string;
@@ -82,7 +86,7 @@ export default function StockTable({
                   <td className="py-3 text-right text-text tabular-nums">
                     {view === "price"
                       ? formatPrice(stock.price) + "원"
-                      : formatPrice(stock.foreign ?? 0)}
+                      : formatSupplyValue(stock.foreign)}
                   </td>
                   <td className="py-3 text-right">
                     {view === "price" ? (
@@ -90,7 +94,7 @@ export default function StockTable({
                         {formatChangeRate(stock.changeRate)}
                       </Badge>
                     ) : (
-                      formatPrice(stock.institution ?? 0)
+                      formatSupplyValue(stock.institution)
                     )}
                   </td>
                   <td className="py-3 pr-4 text-right text-text-secondary tabular-nums">
@@ -98,7 +102,7 @@ export default function StockTable({
                       ? stock.volume !== undefined
                         ? formatVolume(stock.volume)
                         : "-"
-                      : formatPrice(stock.program ?? 0)}
+                      : formatSupplyValue(stock.program)}
                   </td>
                 </tr>
               );
