@@ -12,9 +12,11 @@ import Button from "@/components/ui/Button";
 import Tab from "@/components/ui/Tab";
 import Toggle from "@/components/ui/Toggle";
 import { useThemePageData } from "@/features/themes/hooks/useThemePageData";
+import { useIsTodayDataReady } from "@/features/themes/hooks/useIsTodayDataReady";
 
 export default function ThemesPage() {
   const { dbThemeData, dbSupplyData, isLoading } = useThemePageData();
+  const isDataReady = useIsTodayDataReady();
 
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<string>("volume");
@@ -26,6 +28,23 @@ export default function ThemesPage() {
   // 새로고침 로직
   const [isReFetching, setIsReFetching] = useState(false);
   const isRefreshing = isReFetching && isFetching > 0;
+
+  if (isDataReady)
+    return (
+      <main className="xl:mx-auto xl:w-7xl px-4 py-6 flex-1 flex flex-col">
+        <div className="mb-6 w-full">
+          <Title level={1}>오늘의 테마</Title>
+        </div>
+        <div className="flex-1 flex items-center justify-center text-center flex-col">
+          <p className="text-lg text-text-secondary max-w-md">
+            장 시작 전 데이터 정비 중입니다.
+          </p>
+          <p className="text-lg text-text-secondary max-w-md">
+            오전 8:10부터 오늘의 테마를 확인하실 수 있습니다.
+          </p>
+        </div>
+      </main>
+    );
 
   if (isLoading)
     return (
