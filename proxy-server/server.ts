@@ -120,13 +120,26 @@ app.listen(PORT, () => {
   console.log(`Proxy server running on port ${PORT}`);
 });
 
-// 10분마다 Vercel cron 엔드포인트 호출 → 테마/수급 데이터 자동 갱신
+// 10분마다 Vercel cron 엔드포인트 호출 → 테마/수급 데이터 자동 갱신 (08:05~20:15만 동작)
 const VERCEL_URL = process.env.VERCEL_URL;
 const CRON_SECRET = process.env.CRON_SECRET;
 const CRON_INTERVAL_MS = 10 * 60 * 1000;
 
+function isWithinCollectionWindow(): boolean {
+  const kstNow = new Date(Date.now() + 9 * 60 * 60 * 1000);
+  const minutesSinceMidnight =
+    kstNow.getUTCHours() * 60 + kstNow.getUTCMinutes();
+  return (
+    minutesSinceMidnight >= 8 * 60 + 5 && minutesSinceMidnight < 20 * 60 + 15
+  );
+}
+
 if (VERCEL_URL && CRON_SECRET) {
   setInterval(async () => {
+    if (!isWithinCollectionWindow()) {
+      console.log("[cron] 수집 시간대(08:05~20:15) 아님 - 스킵");
+      return;
+    }
     try {
       const res = await fetch(`${VERCEL_URL}/api/cron/refresh`, {
         headers: { authorization: `Bearer ${CRON_SECRET}` },
@@ -136,5 +149,7 @@ if (VERCEL_URL && CRON_SECRET) {
       console.error("[cron] refresh failed:", err);
     }
   }, CRON_INTERVAL_MS);
-  console.log(`[cron] 10분마다 ${VERCEL_URL}/api/cron/refresh 호출 시작`);
+  console.log(
+    `[cron] 10분마다 ${VERCEL_URL}/api/cron/refresh 호출 시작 (08:05~20:15만 동작)`,
+  );
 }
