@@ -2,6 +2,14 @@ import { InvestorFlowItem } from "@/server/hankuk/types";
 import { ProgramFlowItem } from "@/server/kiwoom/types";
 import { themeStock, ThemeWithStocks, ThemeWithSupply } from "../types";
 
+function toNumberOrUndefined(
+  value: string | null | undefined,
+): number | undefined {
+  if (value === null || value === undefined || value === "") return undefined;
+  const num = Number(value);
+  return Number.isNaN(num) ? undefined : num;
+}
+
 type buildSupplyThemesProps = {
   themes: ThemeWithStocks[];
   investorMap: Map<string, InvestorFlowItem | undefined>;
@@ -26,13 +34,16 @@ export function buildSupplyThemes({
       return {
         ...stock,
         institution: investorValid
-          ? Number(investor.orgn_ntby_tr_pbmn)
+          ? (toNumberOrUndefined(investor.orgn_ntby_tr_pbmn) ??
+            dbStock?.institution)
           : dbStock?.institution,
         foreign: investorValid
-          ? Number(investor.frgn_ntby_tr_pbmn)
+          ? (toNumberOrUndefined(investor.frgn_ntby_tr_pbmn) ??
+            dbStock?.foreign)
           : dbStock?.foreign,
         program: programValid
-          ? Number(program.prm_netprps_amt.replace(/^--/, "-"))
+          ? (toNumberOrUndefined(program.prm_netprps_amt?.replace(/^--/, "-")) ??
+            dbStock?.program)
           : dbStock?.program,
       };
     }),
