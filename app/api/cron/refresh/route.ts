@@ -14,6 +14,7 @@ import {
   themeStock,
   stockTopVolume,
   ThemeWithSupply,
+  ThemeWithStocks,
 } from "@/features/themes/types";
 import { buildTopVolumeThemes } from "@/features/themes/utils/buildTopVolumeThemes";
 import { buildTopChangeRateThemes } from "@/features/themes/utils/buildTopChangeRateThemes";
@@ -25,7 +26,7 @@ import { prisma } from "@/lib/prisma";
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const today = () => new Date().toISOString().slice(0, 10).replace(/-/g, "");
 
-async function withRetry<T>(fn: () => Promise<T>, retries = 3): Promise<T> {
+async function withRetry<T>(fn: () => Promise<T>, retries = 5): Promise<T> {
   let lastError: unknown;
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
@@ -155,11 +156,15 @@ export async function refreshThemesData() {
   });
 
   // 7. 상승률 상위 테마 빌드
+  const existingTopChangeRateThemes = await prisma.todaysTheme.findUnique({
+    where: { date_type: { date, type: "topChangeRateThemes" } },
+  });
+
   const topChangeRateThemes = buildTopChangeRateThemes(
     topRateThemes,
     topThemeStocksData,
     volumeDataMap,
-    [],
+    (existingTopChangeRateThemes?.data as ThemeWithStocks[] | null) ?? [],
   );
 
   // 8. 수급 데이터 (기관/외국인 + 프로그램)
