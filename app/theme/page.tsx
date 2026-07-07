@@ -11,11 +11,11 @@ import { useIsFetching, useQueryClient } from "@tanstack/react-query";
 import Button from "@/components/ui/Button";
 import Tab from "@/components/ui/Tab";
 import Toggle from "@/components/ui/Toggle";
-import { useThemePageData } from "@/features/themes/hooks/useThemePageData";
+import { useThemePageDataFromDB } from "@/features/themes/hooks/useThemePageDataFromDB";
 import { useIsTodayDataReady } from "@/features/themes/hooks/useIsTodayDataReady";
 
 export default function ThemesPage() {
-  const { dbThemeData, dbSupplyData, isLoading } = useThemePageData();
+  const { dbThemeData, dbSupplyData, isLoading } = useThemePageDataFromDB();
   const isDataReady = useIsTodayDataReady();
 
   const queryClient = useQueryClient();
@@ -91,12 +91,10 @@ export default function ThemesPage() {
             size="sm"
             onClick={async () => {
               setIsReFetching(true);
+              await fetch("/api/themes/refresh", { method: "POST" });
               await Promise.all([
-                queryClient.invalidateQueries({ queryKey: ["themes"] }),
-                queryClient.invalidateQueries({ queryKey: ["themestocks"] }),
-                queryClient.invalidateQueries({ queryKey: ["topVolume"] }),
-                queryClient.removeQueries({ queryKey: ["stockInvestorFlow"] }),
-                queryClient.removeQueries({ queryKey: ["stockProgramFlow"] }),
+                queryClient.invalidateQueries({ queryKey: ["themes-db"] }),
+                queryClient.invalidateQueries({ queryKey: ["supply-db"] }),
               ]);
               setIsReFetching(false);
             }}
