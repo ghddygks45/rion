@@ -4,7 +4,7 @@ import "./globals.css";
 import { Providers } from "@/lib/query-client";
 import { ThemeProvider } from "@/lib/theme";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import Header from "@/components/layout/Header";
+import HeaderGate from "@/components/layout/HeaderGate";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
 const pretendard = localFont({
@@ -38,7 +38,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Providers>
           <ThemeProvider>
-            <Header />
+            <HeaderGate />
             {children}
           </ThemeProvider>
           <ReactQueryDevtools initialIsOpen={false} />
