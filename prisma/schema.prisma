@@ -57,3 +57,17 @@ model TodaysSupply {
   @@unique([date, type])
 }
 
+// 종목별 일일 수급 캐시: 테마 랭킹(거래대금/상승률) 스냅샷과 무관하게
+// 그날 한 번이라도 구해진 종목의 수급 값을 stockCode 기준으로 계속 보관한다.
+model StockSupplyDaily {
+  id          Int      @id @default(autoincrement())
+  date        String
+  stockCode   String
+  institution Float?
+  foreign     Float?
+  program     Float?
+  updatedAt   DateTime @updatedAt
+
+  @@unique([date, stockCode])
+}
+

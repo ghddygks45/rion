@@ -13,7 +13,6 @@ import {
   Theme,
   themeStock,
   stockTopVolume,
-  ThemeWithSupply,
   ThemeWithStocks,
 } from "@/features/themes/types";
 import { buildTopVolumeThemes } from "@/features/themes/utils/buildTopVolumeThemes";
@@ -218,46 +217,37 @@ export async function refreshThemesData() {
     ),
   });
 
-  const [topVolumeSupplyRow, topChangeRateSupplyRow] = await Promise.all([
-    prisma.todaysSupply.findUnique({
-      where: { date_type: { date, type: "topVolumeSupply" } },
-    }),
-    prisma.todaysSupply.findUnique({
-      where: { date_type: { date, type: "topChangeRateSupply" } },
-    }),
-  ]);
-
-  // useThemePageData.ts의 dbSupplyData와 동일한 형태로 구성
-  const dbSupplyData = {
-    topVolumeSupply:
-      (topVolumeSupplyRow?.data as ThemeWithSupply[] | null) ?? null,
-    topChangeRateSupply:
-      (topChangeRateSupplyRow?.data as ThemeWithSupply[] | null) ?? null,
-  };
-
-  // useThemePageData.ts와 동일한 이름 + 로직
-  const dbVolumeStockMap = new Map(
-    (dbSupplyData.topVolumeSupply ?? [])
-      .flatMap((theme) => theme.stocks)
-      .map((stock) => [stock.stockCode, stock]),
-  );
-  const dbChangeRateStockMap = new Map(
-    (dbSupplyData.topChangeRateSupply ?? [])
-      .flatMap((theme) => theme.stocks)
-      .map((stock) => [stock.stockCode, stock]),
+  // 종목별 수급 영속 캐시(StockSupplyDaily)에서 폴백 소스를 만든다.
+  // 테마 랭킹(거래대금/상승률) 타입과 무관하게 그날 한 번이라도 구해진 값을 그대로 쓴다.
+  const persistentSupplyRows = await prisma.stockSupplyDaily.findMany({
+    where: { date, stockCode: { in: allStockCodes } },
+  });
+  const persistentSupplyMap = new Map(
+    persistentSupplyRows.map((row) => [
+      row.stockCode,
+      {
+        stockCode: row.stockCode,
+        stockName: "",
+        price: 0,
+        changeRate: 0,
+        institution: row.institution ?? undefined,
+        foreign: row.foreign ?? undefined,
+        program: row.program ?? undefined,
+      },
+    ]),
   );
 
   const topVolumeSupply = buildSupplyThemes({
     themes: topVolumeThemes,
     investorMap,
     programMap,
-    dbStockMap: dbVolumeStockMap,
+    dbStockMap: persistentSupplyMap,
   });
   const topChangeRateSupply = buildSupplyThemes({
     themes: topChangeRateThemes,
     investorMap,
     programMap,
-    dbStockMap: dbChangeRateStockMap,
+    dbStockMap: persistentSupplyMap,
   });
 
   // 9. DB 저장
@@ -299,6 +289,44 @@ export async function refreshThemesData() {
       },
     }),
   ]);
+
+  // 신규: 이번 실행에서 최종 확정된(라이브든 폴백이든) 종목별 수급 값을
+  // 랭킹 타입과 무관한 영속 캐시(StockSupplyDaily)에도 저장한다.
+  // 값이 있는 필드만 update해서(undefined는 Prisma가 무시) 과거 값을 지우지 않는다.
+  const allSupplyStocks = [...topVolumeSupply, ...topChangeRateSupply].flatMap(
+    (theme) => theme.stocks,
+  );
+  const uniqueSupplyStockMap = new Map(
+    allSupplyStocks.map((stock) => [stock.stockCode, stock]),
+  );
+  await Promise.all(
+    [...uniqueSupplyStockMap.values()]
+      .filter(
+        (stock) =>
+          stock.institution !== undefined ||
+          stock.foreign !== undefined ||
+          stock.program !== undefined,
+      )
+      .map((stock) =>
+        prisma.stockSupplyDaily.upsert({
+          where: { date_stockCode: { date, stockCode: stock.stockCode } },
+          update: {
+            ...(stock.institution !== undefined && {
+              institution: stock.institution,
+            }),
+            ...(stock.foreign !== undefined && { foreign: stock.foreign }),
+            ...(stock.program !== undefined && { program: stock.program }),
+          },
+          create: {
+            date,
+            stockCode: stock.stockCode,
+            institution: stock.institution,
+            foreign: stock.foreign,
+            program: stock.program,
+          },
+        }),
+      ),
+  );
 
   // *********************************************************
 
