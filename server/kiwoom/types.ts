@@ -85,6 +85,27 @@ export type KiwoomStockInfoResponse = {
   return_msg: string;
 };
 
+// 종목정보 조회(ka10100)
+export type KiwoomStockBasicInfoResponse = {
+  code: string; // 종목코드
+  name: string; // 종목명
+  listCount: string; // 상장주식수
+  auditInfo: string; // 감리구분
+  regDay: string; // 상장일
+  lastPrice: string; // 전일종가
+  state: string; // 종목상태
+  marketCode: string; // 시장구분코드
+  marketName: string; // 시장명
+  upName: string; // 업종명
+  upSizeName: string; // 회사크기분류
+  companyClassName: string; // 회사분류
+  orderWarning: string; // 투자유의종목여부
+  nxtEnable: string; // NXT기능여부
+  kind: string; // 종목구분
+  return_code: number;
+  return_msg: string;
+};
+
 // 키움 데이터 받아와서 새로운 형태로 가공하기 위한 타입
 export type KiwoomThemeGroupWithStocks = KiwoomThemeGroup & {
   stocks: KiwoomThemeStock[];
