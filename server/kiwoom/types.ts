@@ -236,3 +236,33 @@ export type ProgramFlowItem = {
 export type ProgramFlowResponse = {
   stk_daly_prm_trde_trnsn: ProgramFlowItem[];
 };
+
+// 일별주가요청(ka10086)
+export type KiwoomDailyPrice = {
+  date: string; // 날짜
+  open_pric: string; // 시가
+  high_pric: string; // 고가
+  low_pric: string; // 저가
+  close_pric: string; // 종가
+  pred_rt: string; // 전일비
+  flu_rt: string; // 등락률
+  trde_qty: string; // 거래량
+  amt_mn: string; // 금액(백만)
+  crd_rt: string; // 신용비
+  ind: string; // 개인
+  orgn: string; // 기관
+  for_qty: string; // 외인수량
+  frgn: string; // 외국계
+  prm: string; // 프로그램
+  for_rt: string; // 외인비
+  for_poss: string; // 외인보유
+  for_wght: string; // 외인비중
+  for_netprps: string; // 외인순매수
+  orgn_netprps: string; // 기관순매수
+  ind_netprps: string; // 개인순매수
+  crd_remn_rt: string; // 신용잔고율
+};
+
+export type KiwoomDailyPriceResponse = {
+  daly_stkpc: KiwoomDailyPrice[];
+};

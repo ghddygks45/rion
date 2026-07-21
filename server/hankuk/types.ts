@@ -131,3 +131,41 @@ export type InvestorFlowItem = {
   frgn_seln_tr_pbmn: string; // 외국인 매도 거래 대금
   orgn_seln_tr_pbmn: string; // 기관계 매도 거래 대금
 };
+
+// 국내업종 일자별지수(FHKUP03500100)
+export type IndustryDailyIndexSnapshot = {
+  prdy_vrss_sign: string; // 전일 대비 부호
+  bstp_nmix_prdy_ctrt: string; // 업종 지수 전일 대비율
+  prdy_nmix: string; // 전일 지수
+  acml_vol: string; // 누적 거래량
+  acml_tr_pbmn: string; // 누적 거래 대금
+  hts_kor_isnm: string; // HTS 한글 종목명
+  bstp_nmix_prpr: string; // 업종 지수 현재가
+  bstp_cls_code: string; // 업종 구분 코드
+  prdy_vol: string; // 전일 거래량
+  bstp_nmix_oprc: string; // 업종 지수 시가2
+  bstp_nmix_hgpr: string; // 업종 지수 최고가
+  bstp_nmix_lwpr: string; // 업종 지수 최저가
+  futs_prdy_oprc: string; // 선물 전일 시가
+  futs_prdy_hgpr: string; // 선물 전일 최고가
+  futs_prdy_lwpr: string; // 선물 전일 최저가
+};
+
+export type IndustryDailyIndexItem = {
+  stck_bsop_date: string; // 주식 영업 일자
+  bstp_nmix_prpr: string; // 업종 지수 현재가
+  bstp_nmix_oprc: string; // 업종 지수 시가2
+  bstp_nmix_hgpr: string; // 업종 지수 최고가
+  bstp_nmix_lwpr: string; // 업종 지수 최저가
+  acml_vol: string; // 누적 거래량
+  acml_tr_pbmn: string; // 누적 거래 대금
+  mod_yn: string; // 변경 여부
+};
+
+export type IndustryDailyIndexResponse = {
+  rt_cd: string; // 성공 실패 여부
+  msg_cd: string; // 응답코드
+  msg1: string; // 응답메세지
+  output1: IndustryDailyIndexSnapshot;
+  output2: IndustryDailyIndexItem[];
+};
