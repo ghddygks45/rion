@@ -44,13 +44,13 @@ export async function GET(request: Request) {
       "ka10015",
       {
         stk_cd: `${stockCode}_AL`,
-        strt_dt: "20260710",
+        strt_dt: formatYYYYMMDD(today),
       },
     ),
     // 투자경고종목 평가용
     kiwoomFetch<KiwoomDailyPriceResponse>("/api/dostk/mrkcond", "ka10086", {
       stk_cd: `${stockCode}_AL`,
-      qry_dt: "20260710",
+      qry_dt: formatYYYYMMDD(today),
       indc_tp: "1",
     }),
     hankukFetch<IndustryDailyIndexResponse>(
@@ -60,8 +60,8 @@ export async function GET(request: Request) {
       {
         FID_COND_MRKT_DIV_CODE: "U",
         FID_INPUT_ISCD: compositeIndexCode,
-        FID_INPUT_DATE_1: "20260620",
-        FID_INPUT_DATE_2: "20260710",
+        FID_INPUT_DATE_1: formatYYYYMMDD(indexLookbackStart),
+        FID_INPUT_DATE_2: formatYYYYMMDD(today),
         FID_PERIOD_DIV_CODE: "D",
       },
     ),

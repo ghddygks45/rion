@@ -11,12 +11,25 @@ type OverheatResult = {
   categories: RiskCategoryResult[];
 };
 
+function StatusText({ met }: { met: boolean }) {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      {met && <span className="w-2 h-2 rounded-full bg-red-600" />}
+      {met ? "해당" : "해당 없음"}
+    </span>
+  );
+}
+
 function ShortTermOverheatingCard({ result }: { result: RiskCategoryResult }) {
   return (
     <div className="rounded-lg border border-border bg-surface p-4 text-sm text-text space-y-1">
       <p className="font-medium">단기과열</p>
-      <p>지정예고: {result.isWarning ? "해당" : "해당 없음"}</p>
-      <p>지정: {result.isDesignated ? "해당" : "해당 없음"}</p>
+      <p>
+        지정예고: <StatusText met={!!result.isWarning} />
+      </p>
+      <p>
+        지정: <StatusText met={result.isDesignated} />
+      </p>
       {result.warningDate && <p>예고일: {result.warningDate}</p>}
       {result.riskLevel && (
         <div className="flex items-center gap-2">
@@ -37,8 +50,12 @@ function InvestmentWarningCard({ result }: { result: RiskCategoryResult }) {
   return (
     <div className="rounded-lg border border-border bg-surface p-4 text-sm text-text space-y-1">
       <p className="font-medium">투자경고</p>
-      <p>지정예고[투자주의]: {result.isWarning ? "해당" : "해당 없음"}</p>
-      <p>지정: {result.isDesignated ? "해당" : "해당 없음"}</p>
+      <p>
+        지정예고[투자주의]: <StatusText met={!!result.isWarning} />
+      </p>
+      <p>
+        지정: <StatusText met={result.isDesignated} />
+      </p>
       {result.warningDate && <p>예고일: {result.warningDate}</p>}
       {result.riskLevel && (
         <div className="flex items-center gap-2">
@@ -59,8 +76,12 @@ function InvestmentRiskCard({ result }: { result: RiskCategoryResult }) {
   return (
     <div className="rounded-lg border border-border bg-surface p-4 text-sm text-text space-y-1">
       <p className="font-medium">투자위험</p>
-      <p>지정예고: {result.isWarning ? "해당" : "해당 없음"}</p>
-      <p>지정: {result.isDesignated ? "해당" : "해당 없음"}</p>
+      <p>
+        지정예고: <StatusText met={!!result.isWarning} />
+      </p>
+      <p>
+        지정: <StatusText met={result.isDesignated} />
+      </p>
       {result.warningDate && <p>예고일: {result.warningDate}</p>}
       {result.riskLevel && (
         <div className="flex items-center gap-2">
