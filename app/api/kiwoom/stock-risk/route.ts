@@ -9,6 +9,7 @@ import {
 import { IndustryDailyIndexResponse } from "@/server/hankuk/types";
 import { evaluateShortTermOverheating } from "@/server/kiwoom/risk/shortTermOverheating";
 import { evaluateInvestmentWarning } from "@/server/kiwoom/risk/investmentWarning";
+import { evaluateInvestmentRisk } from "@/server/kiwoom/risk/investmentRisk";
 import { getBusinessDaysAgo, formatYYYYMMDD } from "@/server/utils/date";
 
 export async function GET(request: Request) {
@@ -26,23 +27,30 @@ export async function GET(request: Request) {
   // 지정 스캔(최대 10거래일 전)마다 각자 T-5가 또 필요해서 15거래일 + 공휴일 여유분까지 확보
   const indexLookbackStart = getBusinessDaysAgo(today, 20);
 
-  const [data, stockInfo, dailyPrice, industryIndex] = await Promise.all([
+  // 종합주가지수 조회에 필요한 시장 구분(코스피/코스닥)을 먼저 알아야 해서 단독으로 await
+  const stockInfo = await kiwoomFetch<KiwoomStockBasicInfoResponse>(
+    "/api/dostk/stkinfo",
+    "ka10100",
+    { stk_cd: stockCode },
+  );
+
+  // 코스피 종합: "0001", 코스닥 종합: "1001"
+  const compositeIndexCode = stockInfo.marketCode === "10" ? "1001" : "0001";
+
+  const [data, dailyPrice, industryIndex] = await Promise.all([
     // 단기과열 평가용
     kiwoomFetch<KiwoomDailyTradeDetailResponse>(
       "/api/dostk/stkinfo",
       "ka10015",
       {
         stk_cd: `${stockCode}_AL`,
-        strt_dt: formatYYYYMMDD(today),
+        strt_dt: "20260710",
       },
     ),
-    kiwoomFetch<KiwoomStockBasicInfoResponse>("/api/dostk/stkinfo", "ka10100", {
-      stk_cd: stockCode,
-    }),
     // 투자경고종목 평가용
     kiwoomFetch<KiwoomDailyPriceResponse>("/api/dostk/mrkcond", "ka10086", {
       stk_cd: `${stockCode}_AL`,
-      qry_dt: formatYYYYMMDD(today),
+      qry_dt: "20260710",
       indc_tp: "1",
     }),
     hankukFetch<IndustryDailyIndexResponse>(
@@ -51,9 +59,9 @@ export async function GET(request: Request) {
       "FHKUP03500100",
       {
         FID_COND_MRKT_DIV_CODE: "U",
-        FID_INPUT_ISCD: "0001",
-        FID_INPUT_DATE_1: formatYYYYMMDD(indexLookbackStart),
-        FID_INPUT_DATE_2: formatYYYYMMDD(today),
+        FID_INPUT_ISCD: compositeIndexCode,
+        FID_INPUT_DATE_1: "20260620",
+        FID_INPUT_DATE_2: "20260710",
         FID_PERIOD_DIV_CODE: "D",
       },
     ),
@@ -61,13 +69,19 @@ export async function GET(request: Request) {
 
   const listedShares = Number(stockInfo.listCount);
 
-  console.log("ka10086 raw:", JSON.stringify(dailyPrice));
+  // console.log("ka10086 raw:", JSON.stringify(dailyPrice));
   // console.log(JSON.stringify(industryIndex.output2, null, 2));
 
   const categories = [
     evaluateShortTermOverheating(data.daly_trde_dtl, listedShares),
     evaluateInvestmentWarning(dailyPrice.daly_stkpc, industryIndex.output2),
+    evaluateInvestmentRisk(dailyPrice.daly_stkpc, industryIndex.output2),
   ];
 
-  return NextResponse.json({ stockCode, categories, industryIndex });
+  return NextResponse.json({
+    stockCode,
+    categories,
+    dailyPrice,
+    industryIndex,
+  });
 }

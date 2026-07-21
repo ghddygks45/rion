@@ -55,6 +55,28 @@ function InvestmentWarningCard({ result }: { result: RiskCategoryResult }) {
   );
 }
 
+function InvestmentRiskCard({ result }: { result: RiskCategoryResult }) {
+  return (
+    <div className="rounded-lg border border-border bg-surface p-4 text-sm text-text space-y-1">
+      <p className="font-medium">투자위험</p>
+      <p>지정예고: {result.isWarning ? "해당" : "해당 없음"}</p>
+      <p>지정: {result.isDesignated ? "해당" : "해당 없음"}</p>
+      {result.warningDate && <p>예고일: {result.warningDate}</p>}
+      {result.riskLevel && (
+        <div className="flex items-center gap-2">
+          <span>위험도:</span>
+          <RiskIndicator level={result.riskLevel} />
+          {result.riskMargin !== undefined && (
+            <span className="text-text-secondary">
+              (오차범위 {result.riskMargin.toFixed(1)}% 내외)
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function StockOverheatPage() {
   const [stockCode, setStockCode] = useState("");
   const [result, setResult] = useState<OverheatResult | null>(null);
@@ -84,6 +106,9 @@ export default function StockOverheatPage() {
   );
   const investmentWarning = result?.categories.find(
     (c) => c.category === "investmentWarning",
+  );
+  const investmentRisk = result?.categories.find(
+    (c) => c.category === "investmentRisk",
   );
 
   return (
@@ -127,6 +152,7 @@ export default function StockOverheatPage() {
           {investmentWarning && (
             <InvestmentWarningCard result={investmentWarning} />
           )}
+          {investmentRisk && <InvestmentRiskCard result={investmentRisk} />}
         </div>
       )}
     </main>
