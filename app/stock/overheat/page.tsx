@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "@/components/ui/Button";
 import RiskIndicator from "@/components/ui/RiskIndicator";
 import { RISK_LEVELS } from "@/server/kiwoom/risk/riskLevels";
@@ -9,6 +9,12 @@ import { RiskCategoryResult } from "@/server/kiwoom/risk/types";
 type OverheatResult = {
   stockCode: string;
   categories: RiskCategoryResult[];
+};
+
+type StockSearchResult = {
+  code: string;
+  name: string;
+  marketName: string;
 };
 
 function StatusText({ met }: { met: boolean }) {
@@ -99,14 +105,49 @@ function InvestmentRiskCard({ result }: { result: RiskCategoryResult }) {
 }
 
 export default function StockOverheatPage() {
-  const [stockCode, setStockCode] = useState("");
+  const [query, setQuery] = useState("");
+  const [selectedStockCode, setSelectedStockCode] = useState<string | null>(
+    null,
+  );
+  const [suggestions, setSuggestions] = useState<StockSearchResult[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [result, setResult] = useState<OverheatResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  const handleSearch = async () => {
-    if (!stockCode) return;
+  const isRawCode = /^\d{6}$/.test(query);
 
+  useEffect(() => {
+    itemRefs.current[highlightedIndex]?.scrollIntoView({ block: "nearest" });
+  }, [highlightedIndex]);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    if (!query) {
+      setSuggestions([]);
+      return;
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      const res = await fetch(
+        `/api/stocks/search?q=${encodeURIComponent(query)}`,
+      );
+      if (!res.ok) return;
+      const data = await res.json();
+      setSuggestions(data.results ?? []);
+      setHighlightedIndex(-1);
+    }, 250);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [query]);
+
+  const fetchRisk = async (stockCode: string) => {
     setLoading(true);
     setError(null);
     setResult(null);
@@ -120,6 +161,23 @@ export default function StockOverheatPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSelect = (stock: StockSearchResult) => {
+    setQuery(stock.name);
+    setSelectedStockCode(stock.code);
+    setSuggestions([]);
+    setShowSuggestions(false);
+    fetchRisk(stock.code);
+  };
+
+  const handleSearch = () => {
+    const stockCode = selectedStockCode ?? (isRawCode ? query : null);
+    if (!stockCode) {
+      setError("종목명을 검색해서 선택하거나 종목코드 6자리를 입력해주세요");
+      return;
+    }
+    fetchRisk(stockCode);
   };
 
   const shortTermOverheating = result?.categories.find(
@@ -136,17 +194,72 @@ export default function StockOverheatPage() {
     <main className="max-w-md mx-auto px-6 py-8">
       <h1 className="text-lg font-semibold text-text mb-6">종목 상태 조회</h1>
 
-      <div className="flex gap-2 mb-6">
-        <input
-          value={stockCode}
-          onChange={(e) => setStockCode(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          placeholder="종목코드 (예: 111710)"
-          className="flex-1 px-3 py-2 rounded-lg border border-border bg-surface text-text text-sm"
-        />
-        <Button onClick={handleSearch} disabled={loading || !stockCode}>
-          검색
-        </Button>
+      <div className="relative mb-6">
+        <div className="flex gap-2">
+          <input
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setSelectedStockCode(null);
+              setShowSuggestions(true);
+            }}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
+            onKeyDown={(e) => {
+              const hasSuggestions = showSuggestions && suggestions.length > 0;
+
+              if (e.key === "ArrowDown") {
+                if (!hasSuggestions) return;
+                e.preventDefault();
+                setHighlightedIndex((i) =>
+                  Math.min(i + 1, suggestions.length - 1),
+                );
+              } else if (e.key === "ArrowUp") {
+                if (!hasSuggestions) return;
+                e.preventDefault();
+                setHighlightedIndex((i) => Math.max(i - 1, 0));
+              } else if (e.key === "Enter") {
+                if (hasSuggestions && highlightedIndex >= 0) {
+                  e.preventDefault();
+                  handleSelect(suggestions[highlightedIndex]);
+                } else {
+                  handleSearch();
+                }
+              }
+            }}
+            placeholder="종목명 또는 종목코드 (예: 삼성전자, 111710)"
+            className="flex-1 px-3 py-2 rounded-lg border border-border bg-surface text-text text-sm"
+          />
+          <Button onClick={handleSearch} disabled={loading || !query}>
+            검색
+          </Button>
+        </div>
+
+        {showSuggestions && suggestions.length > 0 && (
+          <ul className="absolute z-10 top-full left-0 right-0 mt-1 rounded-lg border border-border bg-surface shadow-md max-h-60 overflow-auto">
+            {suggestions.map((s, i) => (
+              <li key={s.code}>
+                <button
+                  ref={(el) => {
+                    itemRefs.current[i] = el;
+                  }}
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => handleSelect(s)}
+                  onMouseEnter={() => setHighlightedIndex(i)}
+                  className={`w-full flex items-center justify-between gap-2 px-3 py-2 text-left text-sm text-text ${
+                    i === highlightedIndex ? "bg-border/50" : ""
+                  }`}
+                >
+                  <span>{s.name}</span>
+                  <span className="text-xs text-text-secondary">
+                    {s.code} · {s.marketName}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="flex flex-col gap-1 mb-6 text-xs text-text-secondary">

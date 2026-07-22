@@ -10,7 +10,12 @@ export async function GET(request: Request) {
   }
 
   const results = await prisma.stockMaster.findMany({
-    where: { name: { contains: q, mode: "insensitive" } },
+    where: {
+      OR: [
+        { name: { contains: q, mode: "insensitive" } },
+        { code: { contains: q } },
+      ],
+    },
     select: { code: true, name: true, marketName: true },
     take: 10,
   });
