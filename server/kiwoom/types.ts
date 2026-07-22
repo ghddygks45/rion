@@ -111,6 +111,30 @@ export type KiwoomThemeGroupWithStocks = KiwoomThemeGroup & {
   stocks: KiwoomThemeStock[];
 };
 
+// 종목정보 리스트(ka10099): 코스피/코스닥 전 종목 코드+이름 마스터 조회용
+export type KiwoomStockListItem = {
+  code: string; // 종목코드(단축코드)
+  name: string; // 종목명
+  listCount: string; // 상장주식수
+  auditInfo: string; // 감리구분
+  regDay: string; // 상장일
+  lastPrice: string; // 전일종가
+  state: string; // 종목상태
+  marketCode: string; // 시장구분코드
+  marketName: string; // 시장명
+  upName: string; // 업종명
+  upSizeName: string; // 회사크기분류
+  companyClassName?: string; // 회사분류(코스닥만 존재)
+  orderWarning: string; // 투자유의종목여부
+  nxtEnable: string; // NXT가능여부
+};
+
+export type KiwoomStockListResponse = {
+  list: KiwoomStockListItem[];
+  return_code: number;
+  return_msg: string;
+};
+
 // 일별거래상세(ka10015)
 export type KiwoomDailyTradeDetail = {
   dt: string; // 일자

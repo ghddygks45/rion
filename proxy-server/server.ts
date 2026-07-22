@@ -153,3 +153,39 @@ if (VERCEL_URL && CRON_SECRET) {
     `[cron] 10분마다 ${VERCEL_URL}/api/cron/refresh 호출 시작 (08:05~20:15만 동작)`,
   );
 }
+
+// ── 종목 마스터(코드↔이름) 동기화: 장중엔 안 바뀌는 데이터라 하루 1번, 08:00 KST에만 호출 ──
+// 반복 폴링(setInterval) 대신, "다음 08:00까지 남은 시간"만큼 한 번 타이머를 걸어두고
+// 실행 후 다시 다음 날 08:00으로 재예약하는 방식이라 평소엔 아무 타이머도 돌지 않는다.
+function getMsUntilNextKst8am(): number {
+  const kstNow = new Date(Date.now() + 9 * 60 * 60 * 1000);
+  const nextKst8am = new Date(kstNow);
+  nextKst8am.setUTCHours(8, 0, 0, 0);
+  if (nextKst8am <= kstNow) {
+    nextKst8am.setUTCDate(nextKst8am.getUTCDate() + 1);
+  }
+  return nextKst8am.getTime() - kstNow.getTime();
+}
+
+function scheduleStockMasterSync() {
+  const delayMs = getMsUntilNextKst8am();
+  console.log(
+    `[cron] 다음 stocks/sync 예약: ${Math.round(delayMs / 60000)}분 후 (08:00 KST)`,
+  );
+  setTimeout(async () => {
+    try {
+      const res = await fetch(`${VERCEL_URL}/api/stocks/sync`, {
+        headers: { authorization: `Bearer ${CRON_SECRET}` },
+      });
+      console.log(`[cron] stocks/sync → ${res.status}`);
+    } catch (err) {
+      console.error("[cron] stocks/sync failed:", err);
+    } finally {
+      scheduleStockMasterSync(); // 다음 날 08:00으로 재예약
+    }
+  }, delayMs);
+}
+
+if (VERCEL_URL && CRON_SECRET) {
+  scheduleStockMasterSync();
+}
