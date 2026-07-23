@@ -5,18 +5,18 @@ export default function LandingPage() {
     <main className="flex-1 flex flex-col">
       {/* 1. NAV (랜딩페이지 전용 - 기존 전역 Header.tsx와 별개) */}
       <nav className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-x-6 gap-y-3 px-[clamp(20px,5vw,40px)] py-4">
+        <div className="mx-auto flex min-h-18 max-w-[1180px] flex-wrap items-center justify-between gap-x-6 gap-y-3 px-[clamp(20px,5vw,40px)]">
           <div className="flex items-center gap-2 text-lg font-extrabold tracking-[0.14em] text-text">
             RION
             <span className="h-1.5 w-1.5 rounded-full bg-accent" />
           </div>
-          <div className="flex flex-wrap items-center gap-4 text-sm text-text-secondary sm:gap-8">
-            <Link href="#features">기능</Link>
-            <Link href="theme">오늘의 테마</Link>
-            <Link href="#alerts">알림</Link>
+          <div className="flex flex-wrap items-center gap-4 text-sm text-text sm:gap-8">
+            <Link href="#features">핵심기능</Link>
+            <Link href="#themes">오늘의 테마</Link>
+            <Link href="#alerts">실시간 알림</Link>
             <Link
               href="/theme"
-              className="rounded-lg bg-accent px-4.5 py-2.25 font-semibold text-white"
+              className="rounded-lg bg-accent px-4.5 py-2.25 font-semibold text-white hidden md:block"
             >
               무료로 시작
             </Link>
@@ -48,12 +48,6 @@ export default function LandingPage() {
               className="rounded-[10px] bg-accent px-[30px] py-[15px] text-base font-bold text-white"
             >
               무료로 시작하기
-            </Link>
-            <Link
-              href="#themes"
-              className="rounded-[10px] border border-border bg-text/5 px-[30px] py-[15px] text-base font-semibold text-text"
-            >
-              데모 보기
             </Link>
           </div>
         </div>
@@ -159,7 +153,7 @@ export default function LandingPage() {
       {/* 3. FEATURES (핵심 기능 6개 카드) */}
       <section
         id="features"
-        className="mx-auto max-w-295 px-[clamp(20px,5vw,40px)] pt-[clamp(72px,11vw,104px)] pb-10"
+        className="mx-auto max-w-295 scroll-mt-18.25 px-[clamp(20px,5vw,40px)] pt-[clamp(72px,11vw,104px)] pb-10"
       >
         <div className="mb-14 text-center">
           <p className="mb-4.5 font-mono text-[13px] font-semibold uppercase tracking-[0.16em] text-accent">
@@ -361,7 +355,7 @@ export default function LandingPage() {
       {/* 4. 오늘의 테마 데모 (id=themes) */}
       <section
         id="themes"
-        className="dark:bg-[radial-gradient(120%_50%_at_50%_0%,rgba(40,52,80,0.18),transparent_60%)]"
+        className="scroll-mt-18.25 dark:bg-[radial-gradient(120%_50%_at_50%_0%,rgba(40,52,80,0.18),transparent_60%)]"
       >
         <div className="mx-auto max-w-295 px-[clamp(20px,5vw,40px)] pt-[clamp(56px,9vw,80px)] pb-10">
           <p className="mb-4 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-accent">
@@ -857,7 +851,7 @@ export default function LandingPage() {
       </section>
 
       {/* 6. 실시간 푸시 알림 (id=alerts) */}
-      <section id="alerts" className="border-t border-border">
+      <section id="alerts" className="scroll-mt-18.25 border-t border-border">
         <div className="mx-auto grid max-w-295 grid-cols-1 items-center gap-8 px-[clamp(20px,5vw,40px)] py-16 lg:grid-cols-2 lg:gap-14 lg:py-24">
           <div>
             <p className="mb-4.5 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-accent">
@@ -1031,7 +1025,7 @@ export default function LandingPage() {
           <br />
           지금 확인하세요
         </h2>
-        <p className="mx-auto mt-5.5 max-w-[480px] text-[17px] leading-relaxed text-text-secondary">
+        <p className="mx-auto mt-5.5 text-[17px] leading-relaxed text-text-secondary">
           신용카드 없이 무료로 시작. 종가베팅 전에 시장의 돈 흐름부터
           확인하세요.
         </p>
@@ -1054,10 +1048,18 @@ export default function LandingPage() {
           </div>
 
           <div className="flex gap-6 text-[13px] text-text-secondary">
-            <Link href="#features">기능</Link>
-            <Link href="#themes">오늘의 테마</Link>
-            <Link href="#">고객센터</Link>
-            <Link href="#">이용약관</Link>
+            <Link href="/privacy" className="hover:underline">
+              개인정보처리방침
+            </Link>
+            <Link href="/terms" className="hover:underline">
+              이용약관
+            </Link>
+            <Link href="/about" className="hover:underline">
+              브랜드 스토리
+            </Link>
+            <Link href="/contact" className="hover:underline">
+              문의하기
+            </Link>
           </div>
 
           <div className="max-w-[340px] text-right text-[11.5px] text-text-disabled">

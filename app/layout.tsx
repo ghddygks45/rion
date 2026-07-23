@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${pretendard.variable} h-full antialiased`}
+      className={`${pretendard.variable} h-full scroll-smooth antialiased`}
       suppressHydrationWarning
     >
       <head>
