@@ -16,7 +16,7 @@ export default function Button({
   className = "",
 }: ButtonProps) {
   const base =
-    "px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed";
+    "px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed";
   const variants = {
     primary: "bg-accent text-white hover:opacity-90",
     secondary: "bg-surface border border-border text-text hover:bg-border",

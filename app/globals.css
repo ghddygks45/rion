@@ -40,7 +40,9 @@ body {
   background-color: var(--bg);
   color: var(--text);
   font-family: var(--font-pretendard), sans-serif;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+}
+
+button,
+select {
+  cursor: pointer;
 }
